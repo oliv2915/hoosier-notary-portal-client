@@ -1,11 +1,13 @@
 import React from 'react';
+import { Container } from 'reactstrap';
 import './App.scss';
+import Signup from "./components/Signup"
 
 function App() {
   return (
-    <div>
-      
-    </div>
+    <Container fluid>
+      <Signup />
+    </Container>
   );
 }
 
