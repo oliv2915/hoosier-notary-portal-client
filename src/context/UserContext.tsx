@@ -16,22 +16,22 @@ interface IUserContextProviderProps {}
 interface IUserContextProviderState {
     token: string | null;
     isAuth: boolean;
-    user: any;
+    user: IUserContextUser;
 }
 
 interface IUserContextUser {
-    id: number | null;
-    email: string | null;
-    firstName: string | null;
+    id?: number | null;
+    email?: string | null;
+    firstName?: string | null;
     middleName?: string | null;
-    lastName: string | null;
+    lastName?: string | null;
     suffix?: string | null;
-    phoneNumber: string | null;
-    isNotary: boolean | null;
-    isActiveNotary: boolean | null;
-    isEmployee: boolean | null;
-    isActiveEmployee: boolean | null;
-    isSuper: boolean | null;
+    phoneNumber?: string | null;
+    isNotary?: boolean | null;
+    isActiveNotary?: boolean | null;
+    isEmployee?: boolean | null;
+    isActiveEmployee?: boolean | null;
+    isSuper?: boolean | null;
 }
 
 export class UserContextProvider extends React.Component<IUserContextProviderProps, IUserContextProviderState> {

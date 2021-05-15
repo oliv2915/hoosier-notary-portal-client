@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Logo from "../assets/logo.svg";
-import { Card, CardTitle, CardBody, Form, Col, Row, Button, Input, FormFeedback } from 'reactstrap';
+import { Card, CardTitle, CardBody, Form, Col, Row, Button, Input, FormFeedback, Alert } from 'reactstrap';
 import UserContext from "../context/UserContext";
 
 interface ISignupProps {
@@ -10,6 +10,9 @@ interface ISignupState {
   user: ISignupUser;
   invalidFields: string[];
   formValid: boolean;
+  isAlertOpen?: boolean;
+  alertMessage?: string;
+  alertColor?: string;
 }
 
 export interface ISignupUser {
@@ -39,7 +42,8 @@ export default class Signup extends React.Component<ISignupProps, ISignupState> 
           confirmPassword: null
         },
         invalidFields: [],
-        formValid: false 
+        formValid: false,
+        isAlertOpen: false
       }
     }
     
@@ -195,26 +199,52 @@ export default class Signup extends React.Component<ISignupProps, ISignupState> 
     }
 
     submitFormData = () => {
-     fetch(`${process.env.REACT_APP_API_SERVER}/user/register`, {
-       method: "POST",
-       headers: new Headers({
-         "Content-Type": "application/json"
-       }),
-       body: JSON.stringify({
-         user: this.state.user
-       })
-     })
-     .then(res => {
-       if (res.status !== 201) console.log("error registering user")
-       return res.json();
-     })
-     .then(data => {
-       this.context.setToken(data.token);
-     })
+      fetch(`${process.env.REACT_APP_API_SERVER}/user/register`, {
+        method: "POST",
+        headers: new Headers({
+          "Content-Type": "application/json"
+        }),
+        body: JSON.stringify({
+          user: this.state.user
+        })
+      })
+      .then(res => {
+        // check for bad res
+        if (res.status !== 201) {
+          if (res.status === 409) return this.setState({
+            alertMessage: "Email already in use",
+            alertColor: "danger"
+          }, () => {
+            if (!this.state.isAlertOpen) {
+              return this.toggleAlert();
+            }
+          })
+        }
+        // res is ok
+        this.setState({
+          alertColor: "success",
+          alertMessage: "Registered Successfully"
+        }, () => {
+          if (!this.state.isAlertOpen) {
+            return this.toggleAlert();
+          }
+        })
+        return res.json();
+      })
+      .then(data => {
+        if (!data) return;
+        if (data.token) this.context.setToken(data.token);
+      })
     }
 
     componentDidMount() {
       this.validateFormInputs();
+    }
+
+    toggleAlert = () => {
+      this.setState({
+        isAlertOpen: !this.state.isAlertOpen
+      })
     }
 
     render() {
@@ -226,6 +256,7 @@ export default class Signup extends React.Component<ISignupProps, ISignupState> 
               </CardTitle>
               <img src={Logo} alt="logo" style={{width: "25%", margin: "auto"}}/>
               <CardBody>
+                <Alert color={this.state.alertColor} isOpen={this.state.isAlertOpen} toggle={this.toggleAlert}>{this.state.alertMessage}</Alert>
                 <Form onSubmit={this.handleSignUpSubmit}>
                   <Row form className="mb-3">
                     <Col>
