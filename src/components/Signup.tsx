@@ -25,7 +25,7 @@ interface ISignupState {
 	alertColor?: string;
 }
 
-export interface ISignupUser {
+interface ISignupUser {
 	firstName: string | null;
 	middleName?: string | null;
 	lastName: string | null;
