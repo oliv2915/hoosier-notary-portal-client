@@ -13,8 +13,9 @@ import {
 	Input,
 	Button,
 } from "reactstrap";
+import { RouteComponentProps } from "react-router-dom";
 
-interface ILoginProps {}
+interface ILoginProps extends RouteComponentProps {}
 
 interface ILoginState {
 	user: ILoginUser;
@@ -30,7 +31,7 @@ interface ILoginUser {
 	password: string | null;
 }
 
-export default class Login extends React.Component<ILoginProps, ILoginState> {
+class Login extends React.Component<ILoginProps, ILoginState> {
 	static contextType = UserContext;
 	constructor(props: ILoginProps) {
 		super(props);
@@ -179,6 +180,8 @@ export default class Login extends React.Component<ILoginProps, ILoginState> {
 	};
 
 	render() {
+		// if user isAuth, push to Dashboard
+		if (this.context.isAuth) this.props.history.push("/profile");
 		return (
 			<div className="d-flex justify-content-center mt-5">
 				<Card style={{ width: "75%" }}>
@@ -233,3 +236,5 @@ export default class Login extends React.Component<ILoginProps, ILoginState> {
 		);
 	}
 }
+
+export default Login;

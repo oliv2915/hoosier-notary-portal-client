@@ -13,8 +13,9 @@ import {
 	Alert,
 } from "reactstrap";
 import UserContext from "../context/UserContext";
+import { RouteComponentProps } from "react-router-dom";
 
-interface ISignupProps {}
+interface ISignupProps extends RouteComponentProps {}
 
 interface ISignupState {
 	user: ISignupUser;
@@ -321,6 +322,8 @@ export default class Signup extends React.Component<
 	};
 
 	render() {
+		// if user isAuth, push to Dashboard
+		if (this.context.isAuth) this.props.history.push("/profile");
 		return (
 			<div className="d-flex justify-content-center mt-5">
 				<Card style={{ width: "75%" }}>
