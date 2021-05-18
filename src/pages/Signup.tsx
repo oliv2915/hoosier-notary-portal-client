@@ -14,6 +14,7 @@ import {
 } from "reactstrap";
 import UserContext from "../context/UserContext";
 import { RouteComponentProps } from "react-router-dom";
+import { IUserContextUser } from "../interfaces";
 
 interface ISignupProps extends RouteComponentProps {}
 
@@ -26,15 +27,9 @@ interface ISignupState {
 	alertColor?: string;
 }
 
-interface ISignupUser {
-	firstName: string | null;
-	middleName?: string | null;
-	lastName: string | null;
-	suffix?: string | null;
-	phoneNumber: string | null;
-	email: string | null;
-	password: string | null;
-	confirmPassword: string | null;
+interface ISignupUser extends IUserContextUser {
+	password?: string | null;
+	confirmPassword?: string | null;
 }
 
 export default class Signup extends React.Component<
@@ -45,16 +40,7 @@ export default class Signup extends React.Component<
 	constructor(props: ISignupProps) {
 		super(props);
 		this.state = {
-			user: {
-				firstName: null,
-				middleName: null,
-				lastName: null,
-				suffix: null,
-				phoneNumber: null,
-				email: null,
-				password: null,
-				confirmPassword: null,
-			},
+			user: {},
 			invalidFields: [],
 			formValid: false,
 			isAlertOpen: false,
@@ -325,7 +311,7 @@ export default class Signup extends React.Component<
 		// if user isAuth, push to Dashboard
 		if (this.context.isAuth) this.props.history.push("/profile");
 		return (
-			<div className="d-flex justify-content-center mt-5">
+			<div className="d-flex justify-content-center mt-3">
 				<Card style={{ width: "75%" }}>
 					<CardTitle className="text-center">
 						<h1>Sign Up</h1>

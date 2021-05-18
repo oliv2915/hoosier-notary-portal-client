@@ -14,6 +14,7 @@ import {
 	Button,
 } from "reactstrap";
 import { RouteComponentProps } from "react-router-dom";
+import { IUserContextUser } from "../interfaces";
 
 interface ILoginProps extends RouteComponentProps {}
 
@@ -26,20 +27,16 @@ interface ILoginState {
 	alertColor?: string;
 }
 
-interface ILoginUser {
-	email: string | null;
-	password: string | null;
+interface ILoginUser extends IUserContextUser {
+	password?: string | null;
 }
 
-class Login extends React.Component<ILoginProps, ILoginState> {
+export default class Login extends React.Component<ILoginProps, ILoginState> {
 	static contextType = UserContext;
 	constructor(props: ILoginProps) {
 		super(props);
 		this.state = {
-			user: {
-				email: null,
-				password: null,
-			},
+			user: {},
 			invalidFields: [],
 			formValid: false,
 			isAlertOpen: false,
@@ -183,7 +180,7 @@ class Login extends React.Component<ILoginProps, ILoginState> {
 		// if user isAuth, push to Dashboard
 		if (this.context.isAuth) this.props.history.push("/profile");
 		return (
-			<div className="d-flex justify-content-center mt-5">
+			<div className="d-flex justify-content-center mt-3">
 				<Card style={{ width: "75%" }}>
 					<CardTitle className="text-center">
 						<h1>Login</h1>
@@ -236,5 +233,3 @@ class Login extends React.Component<ILoginProps, ILoginState> {
 		);
 	}
 }
-
-export default Login;
