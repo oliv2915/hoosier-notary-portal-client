@@ -178,7 +178,7 @@ export default class Login extends React.Component<ILoginProps, ILoginState> {
 
 	render() {
 		// if user isAuth, push to Dashboard
-		if (this.context.isAuth) this.props.history.push("/profile");
+		if (this.context.isAuth) this.props.history.push("/dashboard");
 		return (
 			<div className="d-flex justify-content-center mt-3">
 				<Card style={{ width: "75%" }}>

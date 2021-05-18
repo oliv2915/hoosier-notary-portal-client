@@ -3,15 +3,40 @@ import { Button, Nav, Navbar, NavbarBrand, NavItem, NavLink } from "reactstrap";
 import { Link } from "react-router-dom";
 import Logo from "../assets/logo.svg";
 import UserContext from "../context/UserContext";
+import AddCustomerModal from "./AddCustomerModal";
+import AddAssignmentModal from "./AddAssignmentModal";
 
 interface INavBarProps {}
-interface INavBarState {}
+interface INavBarState {
+	isAddCustomerModalOpen: boolean;
+	isAddAssignmentModalOpen: boolean;
+}
 
 export default class NavBar extends React.Component<
 	INavBarProps,
 	INavBarState
 > {
 	static contextType = UserContext;
+	context!: React.ContextType<typeof UserContext>;
+	constructor(props: INavBarProps) {
+		super(props);
+		this.state = {
+			isAddCustomerModalOpen: false,
+			isAddAssignmentModalOpen: false,
+		};
+	}
+	toggleAddCustomerModal = () => {
+		this.setState({
+			isAddCustomerModalOpen: !this.state.isAddCustomerModalOpen,
+		});
+	};
+
+	toggleAddAssignmentModal = () => {
+		this.setState({
+			isAddAssignmentModalOpen: !this.state.isAddAssignmentModalOpen,
+		});
+	};
+
 	render() {
 		return (
 			<header>
@@ -22,6 +47,32 @@ export default class NavBar extends React.Component<
 						</NavbarBrand>
 					</Link>
 					<Nav>
+						{this.context.user.isEmployee ? (
+							<NavItem>
+								<NavLink>
+									<Button
+										type="button"
+										color="info"
+										onClick={() => this.toggleAddCustomerModal()}
+									>
+										Add Customer
+									</Button>
+								</NavLink>
+							</NavItem>
+						) : null}
+						{this.context.user.isEmployee ? (
+							<NavItem>
+								<NavLink>
+									<Button
+										type="button"
+										color="info"
+										onClick={() => this.toggleAddAssignmentModal()}
+									>
+										Add Assignment
+									</Button>
+								</NavLink>
+							</NavItem>
+						) : null}
 						<NavItem>
 							{this.context.isAuth ? (
 								<Link to="/profile">
@@ -57,6 +108,14 @@ export default class NavBar extends React.Component<
 						</NavItem>
 					</Nav>
 				</Navbar>
+				<AddCustomerModal
+					isOpen={this.state.isAddCustomerModalOpen}
+					toggle={this.toggleAddCustomerModal}
+				/>
+				<AddAssignmentModal
+					isOpen={this.state.isAddAssignmentModalOpen}
+					toggle={this.toggleAddAssignmentModal}
+				/>
 			</header>
 		);
 	}

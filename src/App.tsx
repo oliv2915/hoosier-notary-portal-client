@@ -7,6 +7,7 @@ import NavBar from "./components/NavBar";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import UserProfile from "./pages/UserProfile";
+import Dashboard from "./pages/Dashboard";
 interface IAppProps {}
 interface IAppState {}
 
@@ -21,6 +22,7 @@ class App extends React.Component<IAppProps, IAppState> {
 						<Route exact path="/" component={Login} />
 						<Route path="/signup" component={Signup} />
 						<Route path="/profile" component={UserProfile} />
+						<Route path="/dashboard" component={Dashboard} />
 					</Switch>
 				</Container>
 			</Router>
