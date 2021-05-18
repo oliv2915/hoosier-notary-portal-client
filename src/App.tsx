@@ -4,9 +4,9 @@ import UserContext from "./context/UserContext";
 import { Container } from "reactstrap";
 import "./App.scss";
 import NavBar from "./components/NavBar";
-import Signup from "./components/Signup";
-import Login from "./components/Login";
-import UserProfile from "./components/UserProfile";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
+import UserProfile from "./pages/UserProfile";
 interface IAppProps {}
 interface IAppState {}
 
