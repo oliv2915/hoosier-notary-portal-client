@@ -53,33 +53,29 @@ export default class EditUserInfo extends React.Component<
 	}
 
 	modalDidOpen = () => {
-		if (this.context.user.isNotary || this.context.user.isEmployee) {
-			this.setState(
-				{
-					user: this.context.user,
-					isAlertOpen: true,
-					alertColor: "info",
-					alertMessage:
-						"Password is required to save changes. This will change your password. Password must be a minimum of 8 characters long, have 1 lower and upper case letter, and have 1 number and special character",
-				},
-				() => this.validateFormFields()
-			);
-		}
+		this.setState(
+			{
+				user: this.context.user,
+				isAlertOpen: true,
+				alertColor: "info",
+				alertMessage:
+					"Password is required to save changes. This will change your password. Password must be a minimum of 8 characters long, have 1 lower and upper case letter, and have 1 number and special character",
+			},
+			() => this.validateFormFields()
+		);
 	};
 
 	modalDidExit = () => {
-		if (this.context.user.isNotary || this.context.user.isEmployee) {
-			this.setState(
-				{
-					user: {},
-					isAlertOpen: true,
-					alertColor: "info",
-					alertMessage:
-						"Password is required to save changes. This will change your password. Password must be a minimum of 8 characters long, have 1 lower and upper case letter, and have 1 number and special character",
-				},
-				() => this.validateFormFields()
-			);
-		}
+		this.setState(
+			{
+				user: {},
+				isAlertOpen: true,
+				alertColor: "info",
+				alertMessage:
+					"Password is required to save changes. This will change your password. Password must be a minimum of 8 characters long, have 1 lower and upper case letter, and have 1 number and special character",
+			},
+			() => this.validateFormFields()
+		);
 	};
 
 	handleSubmit = (event: React.BaseSyntheticEvent) => {
@@ -531,54 +527,6 @@ export default class EditUserInfo extends React.Component<
 									onChange={this.handleInputChange}
 								/>
 								<FormFeedback>Passwords don't match </FormFeedback>
-							</Col>
-							<Col hidden={this.context.user.isEmployee}>
-								<Input
-									type="select"
-									name="activeNotary"
-									id="active-notary"
-									placeholder="Active Notary"
-									value={this.state.user.isActiveNotary ? "true" : "false"}
-									onChange={this.handleInputChange}
-									disabled={
-										this.context.user.isNotary || this.context.user.isEmployee
-											? true
-											: false
-									}
-								>
-									<option value="true">Active Notary</option>
-									<option value="false">InActive Notary</option>
-								</Input>
-							</Col>
-						</Row>
-						<Row form hidden={this.state.user.isNotary} className="mt-3">
-							<Col>
-								<Input
-									type="select"
-									name="activeEmployee"
-									id="active-employee"
-									placeholder="Active Employee"
-									value={this.state.user.isActiveEmployee ? "true" : "false"}
-									onChange={this.handleInputChange}
-									disabled={!this.state.user.isSuper}
-								>
-									<option value="true">Active Employee</option>
-									<option value="false">InActive Employee</option>
-								</Input>
-							</Col>
-							<Col>
-								<Input
-									type="select"
-									name="superEmployee"
-									id="super-employee"
-									placeholder="Super Employee"
-									value={this.state.user.isSuper ? "true" : "false"}
-									onChange={this.handleInputChange}
-									disabled={!this.state.user.isSuper}
-								>
-									<option value="true">Supervisor</option>
-									<option value="false">Not a Supervisor</option>
-								</Input>
 							</Col>
 						</Row>
 					</Form>

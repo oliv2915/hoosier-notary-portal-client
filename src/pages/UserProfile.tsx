@@ -23,6 +23,7 @@ export default class UserProfile extends React.Component<
 	IUserProfileState
 > {
 	static contextType = UserContext;
+	context!: React.ContextType<typeof UserContext>;
 	constructor(props: IUserProfileProps) {
 		super(props);
 		this.state = {
@@ -68,6 +69,12 @@ export default class UserProfile extends React.Component<
 										<b>Email Address:</b> {this.context.user.email}
 									</Label>
 								</div>
+								<div hidden={this.context.user.isEmployee}>
+									<Label>
+										<b>Notary Status:</b>{" "}
+										{this.context.user.isActiveNotary ? "Active" : "In-Active"}
+									</Label>
+								</div>
 								<Button
 									color="info"
 									size="sm"
@@ -78,12 +85,12 @@ export default class UserProfile extends React.Component<
 							</CardBody>
 						</Card>
 					</Col>
-					<Col md="4" className="mb-3">
+					<Col md="4" className="mb-3" hidden={this.context.user.isEmployee}>
 						<Card>
 							<CardHeader>Address Info</CardHeader>
 						</Card>
 					</Col>
-					<Col md="4" className="mb-3">
+					<Col md="4" className="mb-3" hidden={this.context.user.isEmployee}>
 						<Card>
 							<CardHeader>Credential Info</CardHeader>
 						</Card>
