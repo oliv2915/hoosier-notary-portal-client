@@ -58,8 +58,9 @@ export default class AddAssignmentModal extends React.Component<
 		})
 			.then((res) => res.json())
 			.then((data) => {
+				console.log(data);
 				this.setState({
-					customers: data,
+					customers: data.customers,
 				});
 			});
 		this.validateInput();

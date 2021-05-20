@@ -75,7 +75,7 @@ export default class Dashboard extends React.Component<
 					<Card>
 						<CardHeader>Assignments</CardHeader>
 						<CardBody>
-							<Table>
+							<Table size="sm">
 								<thead>
 									<tr>
 										<th>Assignment Type</th>
@@ -103,7 +103,7 @@ export default class Dashboard extends React.Component<
 						<Card>
 							<CardHeader>Notaries Pending Approval</CardHeader>
 							<CardBody>
-								<Table>
+								<Table size="sm">
 									<thead>
 										<tr>
 											<th>Notary Name</th>

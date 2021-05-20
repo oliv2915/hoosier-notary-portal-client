@@ -108,14 +108,18 @@ export default class NavBar extends React.Component<
 						</NavItem>
 					</Nav>
 				</Navbar>
-				<AddCustomerModal
-					isOpen={this.state.isAddCustomerModalOpen}
-					toggle={this.toggleAddCustomerModal}
-				/>
-				<AddAssignmentModal
-					isOpen={this.state.isAddAssignmentModalOpen}
-					toggle={this.toggleAddAssignmentModal}
-				/>
+				{this.context.user.isEmployee && (
+					<>
+						<AddCustomerModal
+							isOpen={this.state.isAddCustomerModalOpen}
+							toggle={this.toggleAddCustomerModal}
+						/>
+						<AddAssignmentModal
+							isOpen={this.state.isAddAssignmentModalOpen}
+							toggle={this.toggleAddAssignmentModal}
+						/>
+					</>
+				)}
 			</header>
 		);
 	}

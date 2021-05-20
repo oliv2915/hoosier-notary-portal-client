@@ -13,6 +13,27 @@ export interface IUserContextUser {
 	isSuper?: boolean;
 }
 
+export interface ICommission {
+	id?: number;
+	userId?: number;
+	commissionNumber?: string;
+	nameOnCommission?: string;
+	commissionExpireDate?: Date;
+	commissionState?: string;
+	countyOfResidence?: string;
+}
+
+export interface IAddress {
+	id?: number;
+	userId?: number;
+	customerId?: number;
+	streetOne?: string;
+	streetTwo?: string;
+	city?: string;
+	state?: string;
+	zipCode?: number;
+	type?: string;
+}
 export interface ICustomer {
 	id?: number;
 	name?: string;
@@ -20,6 +41,14 @@ export interface ICustomer {
 	email?: string;
 	customerType?: string;
 	notes?: string;
+}
+
+export interface ICustomerContact {
+	id?: number;
+	customerId?: number;
+	name?: string;
+	email?: string;
+	phoneNumber?: string;
 }
 
 export interface IAssignment {
