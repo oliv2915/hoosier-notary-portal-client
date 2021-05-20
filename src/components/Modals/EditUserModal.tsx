@@ -12,15 +12,15 @@ import {
 	FormFeedback,
 	Alert,
 } from "reactstrap";
-import UserContext from "../context/UserContext";
-import { IUserContextUser } from "../interfaces";
+import UserContext from "../../context/UserContext";
+import { IUserContextUser } from "../../interfaces";
 
-interface IEditUserInfoProps {
+interface IEditUserModalProps {
 	isOpen: boolean;
 	toggle: () => void;
 }
 
-interface IEditUserInfoState {
+interface IEditUserModalState {
 	isOpen: boolean;
 	user: IEditInfoUser;
 	invalidFields: string[];
@@ -35,13 +35,13 @@ interface IEditInfoUser extends IUserContextUser {
 	confirmPassword?: string;
 }
 
-export default class EditUserInfo extends React.Component<
-	IEditUserInfoProps,
-	IEditUserInfoState
+export default class EditUserModal extends React.Component<
+	IEditUserModalProps,
+	IEditUserModalState
 > {
 	static contextType = UserContext;
 	context!: React.ContextType<typeof UserContext>;
-	constructor(props: IEditUserInfoProps) {
+	constructor(props: IEditUserModalProps) {
 		super(props);
 		this.state = {
 			user: {},

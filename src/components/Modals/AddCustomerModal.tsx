@@ -12,8 +12,8 @@ import {
 	Alert,
 	FormGroup,
 } from "reactstrap";
-import UserContext from "../context/UserContext";
-import { ICustomer } from "../interfaces";
+import UserContext from "../../context/UserContext";
+import { ICustomer } from "../../interfaces";
 
 interface IAddCustomerModalProps {
 	isOpen: boolean;

@@ -14,8 +14,8 @@ import {
 	ModalHeader,
 	Row,
 } from "reactstrap";
-import UserContext from "../context/UserContext";
-import { ICommission } from "../interfaces";
+import UserContext from "../../context/UserContext";
+import { ICommission } from "../../interfaces";
 
 interface IAddCredentialModalProps extends RouteComponentProps {
 	isOpen: boolean;

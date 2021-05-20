@@ -13,8 +13,8 @@ import {
 	FormGroup,
 	Label,
 } from "reactstrap";
-import UserContext from "../context/UserContext";
-import { IAssignment, ICustomer } from "../interfaces";
+import UserContext from "../../context/UserContext";
+import { IAssignment, ICustomer } from "../../interfaces";
 
 interface IAddAssignmentModalProps {
 	isOpen: boolean;

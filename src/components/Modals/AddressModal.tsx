@@ -13,10 +13,10 @@ import {
 	ModalHeader,
 	Row,
 } from "reactstrap";
-import UserContext from "../context/UserContext";
-import { IAddress, ICustomer } from "../interfaces";
+import UserContext from "../../context/UserContext";
+import { IAddress, ICustomer } from "../../interfaces";
 
-interface IAddressModalProps extends RouteComponentProps {
+interface IAddressModalProps {
 	isOpen: boolean;
 	toggle: () => void;
 }
@@ -280,7 +280,6 @@ export default class AddressModal extends React.Component<
 					if ("error" in data) {
 						return; // handled above
 					} else {
-						this.props.history.push("/profile");
 						this.props.toggle();
 					}
 				});
