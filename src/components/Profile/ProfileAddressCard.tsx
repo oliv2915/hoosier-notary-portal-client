@@ -3,9 +3,8 @@ import UserContext from "../../context/UserContext";
 import { Button, Card, CardBody, CardHeader, Table } from "reactstrap";
 import { IAddress } from "../../interfaces";
 import AddressModal from "../Modals/AddressModal";
-import { RouteComponentProps } from "react-router-dom";
 
-interface IProfileAddressCardProps extends RouteComponentProps {}
+interface IProfileAddressCardProps {}
 
 interface IProfileAddressCardState {
 	isAddAddressModalOpen: boolean;

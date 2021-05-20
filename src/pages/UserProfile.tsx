@@ -27,20 +27,17 @@ export default class UserProfile extends React.Component<
 					<Col md="4" className="mb-3">
 						<ProfileUserCard />
 					</Col>
-					<Col md="4" className="mb-3" hidden={this.context.user.isEmployee}>
-						<ProfileAddressCard
-							history={this.props.history}
-							location={this.props.location}
-							match={this.props.match}
-						/>
-					</Col>
-					<Col md="4" className="mb-3" hidden={this.context.user.isEmployee}>
-						<ProfileCredentialCard
-							history={this.props.history}
-							location={this.props.location}
-							match={this.props.match}
-						/>
-					</Col>
+
+					{this.context.user.isNotary && (
+						<>
+							<Col md="4" className="mb-3">
+								<ProfileAddressCard />
+							</Col>
+							<Col md="4" className="mb-3">
+								<ProfileCredentialCard />
+							</Col>{" "}
+						</>
+					)}
 				</Row>
 			</div>
 		);

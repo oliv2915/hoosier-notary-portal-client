@@ -16,12 +16,12 @@ import {
 import UserContext from "../../context/UserContext";
 import { IAssignment, ICustomer } from "../../interfaces";
 
-interface IAddAssignmentModalProps {
+interface IAssignmentModalProps {
 	isOpen: boolean;
 	toggle: () => void;
 }
 
-interface IAddAssignmentModalState {
+interface IAssignmentModalState {
 	assignment: IAssignment;
 	customers: ICustomer[];
 	formValid: boolean;
@@ -31,13 +31,13 @@ interface IAddAssignmentModalState {
 	alertColor?: string;
 }
 
-export default class AddAssignmentModal extends React.Component<
-	IAddAssignmentModalProps,
-	IAddAssignmentModalState
+export default class AssignmentModal extends React.Component<
+	IAssignmentModalProps,
+	IAssignmentModalState
 > {
 	static contextType = UserContext;
 	context!: React.ContextType<typeof UserContext>;
-	constructor(props: IAddAssignmentModalProps) {
+	constructor(props: IAssignmentModalProps) {
 		super(props);
 		this.state = {
 			assignment: {},
@@ -58,7 +58,6 @@ export default class AddAssignmentModal extends React.Component<
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				console.log(data);
 				this.setState({
 					customers: data.customers,
 				});
@@ -313,7 +312,7 @@ export default class AddAssignmentModal extends React.Component<
 
 	validateInput = () => {
 		const invalidFields: string[] = [];
-		console.log(this.state.assignment.customerId);
+
 		if (!this.state.assignment.customerId) invalidFields.push("customerId");
 		if (!this.state.assignment.fileNumber) invalidFields.push("fileNumber");
 		if (!this.state.assignment.dueDate) invalidFields.push("dueDate");

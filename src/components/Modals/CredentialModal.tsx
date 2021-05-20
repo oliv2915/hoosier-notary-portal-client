@@ -1,5 +1,4 @@
 import * as React from "react";
-import { RouteComponentProps } from "react-router";
 import {
 	Alert,
 	Button,
@@ -17,12 +16,12 @@ import {
 import UserContext from "../../context/UserContext";
 import { ICommission } from "../../interfaces";
 
-interface IAddCredentialModalProps extends RouteComponentProps {
+interface ICredentialModalProps {
 	isOpen: boolean;
 	toggle: () => void;
 }
 
-interface IAddCredentialModalState {
+interface ICredentialModalState {
 	commission: ICommission;
 	formValid: boolean;
 	invalidFields: string[];
@@ -31,13 +30,13 @@ interface IAddCredentialModalState {
 	alertColor?: string;
 }
 
-export default class AddCredentialModal extends React.Component<
-	IAddCredentialModalProps,
-	IAddCredentialModalState
+export default class CredentialModal extends React.Component<
+	ICredentialModalProps,
+	ICredentialModalState
 > {
 	static contextType = UserContext;
 	context!: React.ContextType<typeof UserContext>;
-	constructor(props: IAddCredentialModalProps) {
+	constructor(props: ICredentialModalProps) {
 		super(props);
 		this.state = {
 			commission: {},
@@ -208,7 +207,6 @@ export default class AddCredentialModal extends React.Component<
 				if ("error" in data) {
 					return; // handled above
 				} else {
-					this.props.history.push("/profile");
 					this.props.toggle();
 				}
 			});

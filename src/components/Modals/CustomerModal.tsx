@@ -15,12 +15,12 @@ import {
 import UserContext from "../../context/UserContext";
 import { ICustomer } from "../../interfaces";
 
-interface IAddCustomerModalProps {
+interface ICustomerModalProps {
 	isOpen: boolean;
 	toggle: () => void;
 }
 
-interface IAddCustomerModalState {
+interface ICustomerModalState {
 	customer: ICustomer;
 	formValid: boolean;
 	invalidFields: string[];
@@ -29,13 +29,13 @@ interface IAddCustomerModalState {
 	alertColor?: string;
 }
 
-export default class AddCustomerModal extends React.Component<
-	IAddCustomerModalProps,
-	IAddCustomerModalState
+export default class CustomerModal extends React.Component<
+	ICustomerModalProps,
+	ICustomerModalState
 > {
 	static contextType = UserContext;
 	context!: React.ContextType<typeof UserContext>;
-	constructor(props: IAddCustomerModalProps) {
+	constructor(props: ICustomerModalProps) {
 		super(props);
 		this.state = {
 			customer: {},
@@ -229,7 +229,6 @@ export default class AddCustomerModal extends React.Component<
 	};
 
 	render() {
-		// console.log(this.state);
 		return (
 			<Modal
 				isOpen={this.props.isOpen}

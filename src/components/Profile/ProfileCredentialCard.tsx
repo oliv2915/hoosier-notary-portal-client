@@ -1,11 +1,10 @@
 import React from "react";
 import UserContext from "../../context/UserContext";
-import { RouteComponentProps } from "react-router-dom";
 import { Button, Card, CardBody, CardHeader, Table } from "reactstrap";
 import { ICommission } from "../../interfaces";
-import AddCredentialModal from "../Modals/AddCredentialsModal";
+import CredentialModal from "../Modals/CredentialModal";
 
-interface IProfileCredentialTableProps extends RouteComponentProps {}
+interface IProfileCredentialTableProps {}
 
 interface IProfileCredentialTableState {
 	isAddCredentialModalOpen: boolean;
@@ -90,12 +89,9 @@ export default class ProfileCredential extends React.Component<
 						</Table>
 					</CardBody>
 				</Card>
-				<AddCredentialModal
+				<CredentialModal
 					isOpen={this.state.isAddCredentialModalOpen}
 					toggle={this.toggleAddCredentialModal}
-					history={this.props.history}
-					location={this.props.location}
-					match={this.props.match}
 				/>
 			</>
 		);

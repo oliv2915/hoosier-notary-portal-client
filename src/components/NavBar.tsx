@@ -3,8 +3,8 @@ import { Button, Nav, Navbar, NavbarBrand, NavItem, NavLink } from "reactstrap";
 import { Link } from "react-router-dom";
 import Logo from "../assets/logo.svg";
 import UserContext from "../context/UserContext";
-import AddCustomerModal from "./Modals/AddCustomerModal";
-import AddAssignmentModal from "./Modals/AddAssignmentModal";
+import CustomerModal from "./Modals/CustomerModal";
+import AssignmentModal from "./Modals/AssignmentModal";
 
 interface INavBarProps {}
 interface INavBarState {
@@ -110,11 +110,11 @@ export default class NavBar extends React.Component<
 				</Navbar>
 				{this.context.user.isEmployee && (
 					<>
-						<AddCustomerModal
+						<CustomerModal
 							isOpen={this.state.isAddCustomerModalOpen}
 							toggle={this.toggleAddCustomerModal}
 						/>
-						<AddAssignmentModal
+						<AssignmentModal
 							isOpen={this.state.isAddAssignmentModalOpen}
 							toggle={this.toggleAddAssignmentModal}
 						/>
