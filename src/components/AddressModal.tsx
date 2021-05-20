@@ -16,12 +16,12 @@ import {
 import UserContext from "../context/UserContext";
 import { IAddress, ICustomer } from "../interfaces";
 
-interface IAddAddressModalProps extends RouteComponentProps {
+interface IAddressModalProps extends RouteComponentProps {
 	isOpen: boolean;
 	toggle: () => void;
 }
 
-interface IAddAddressModalState {
+interface IAddressModalState {
 	address: IAddress;
 	customers: ICustomer[];
 	formValid: boolean;
@@ -31,13 +31,13 @@ interface IAddAddressModalState {
 	alertColor?: string;
 }
 
-export default class AddAddressModal extends React.Component<
-	IAddAddressModalProps,
-	IAddAddressModalState
+export default class AddressModal extends React.Component<
+	IAddressModalProps,
+	IAddressModalState
 > {
 	static contextType = UserContext;
 	context!: React.ContextType<typeof UserContext>;
-	constructor(props: IAddAddressModalProps) {
+	constructor(props: IAddressModalProps) {
 		super(props);
 		this.state = {
 			address: {},

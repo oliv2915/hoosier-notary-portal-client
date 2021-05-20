@@ -10,7 +10,7 @@ import {
 	Row,
 	Table,
 } from "reactstrap";
-import AddAddressModal from "../components/AddAddressModal";
+import AddressModal from "../components/AddressModal";
 import AddCredentialModal from "../components/AddCredentialsModal";
 import EditUserInfo from "../components/EditUserInfo";
 import UserContext from "../context/UserContext";
@@ -231,7 +231,7 @@ export default class UserProfile extends React.Component<
 					isOpen={this.state.isEditInfoModalOpen}
 					toggle={this.toggleEditInfoModal}
 				/>
-				<AddAddressModal
+				<AddressModal
 					isOpen={this.state.isAddAddressModalOpen}
 					toggle={this.toggleAddAddressModal}
 					history={this.props.history}
