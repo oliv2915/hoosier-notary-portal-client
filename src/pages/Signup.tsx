@@ -15,6 +15,7 @@ import {
 import UserContext from "../context/UserContext";
 import { RouteComponentProps } from "react-router-dom";
 import { IUserContextUser } from "../interfaces";
+import NavBar from "../components/NavBar";
 
 interface ISignupProps extends RouteComponentProps {}
 
@@ -311,122 +312,133 @@ export default class Signup extends React.Component<
 		// if user isAuth, push to Dashboard
 		if (this.context.isAuth) this.props.history.push("/dashboard");
 		return (
-			<div className="d-flex justify-content-center mt-3">
-				<Card style={{ width: "75%" }}>
-					<CardTitle className="text-center">
-						<h1>Sign Up</h1>
-					</CardTitle>
-					<img src={Logo} alt="logo" style={{ width: "25%", margin: "auto" }} />
-					<CardBody>
-						<Alert
-							color={this.state.alertColor}
-							isOpen={this.state.isAlertOpen}
-							toggle={this.toggleAlert}
-						>
-							{this.state.alertMessage}
-						</Alert>
-						<Form onSubmit={this.handleSignUpSubmit}>
-							<Row form className="mb-3">
-								<Col>
-									<Input
-										invalid={this.state.invalidFields.includes("firstName")}
-										valid={!this.state.invalidFields.includes("firstName")}
-										type="text"
-										name="firstName"
-										placeholder="First Name"
-										onChange={this.handleInputChange}
-									/>
-									<FormFeedback>Required</FormFeedback>
-								</Col>
-								<Col>
-									<Input
-										valid
-										type="text"
-										name="middleName"
-										placeholder="Middle Name"
-										onChange={this.handleInputChange}
-									/>
-								</Col>
-								<Col>
-									<Input
-										invalid={this.state.invalidFields.includes("lastName")}
-										valid={!this.state.invalidFields.includes("lastName")}
-										type="text"
-										name="lastName"
-										placeholder="Last Name"
-										onChange={this.handleInputChange}
-									/>
-									<FormFeedback>Required</FormFeedback>
-								</Col>
-								<Col>
-									<Input
-										valid
-										type="text"
-										name="suffix"
-										placeholder="Suffix"
-										onChange={this.handleInputChange}
-									/>
-								</Col>
-							</Row>
-							<Row form className="mb-3">
-								<Col>
-									<Input
-										invalid={this.state.invalidFields.includes("email")}
-										valid={!this.state.invalidFields.includes("email")}
-										type="email"
-										name="email"
-										placeholder="Email Address"
-										onChange={this.handleInputChange}
-									/>
-									<FormFeedback>Required</FormFeedback>
-								</Col>
-								<Col>
-									<Input
-										invalid={this.state.invalidFields.includes("phoneNumber")}
-										valid={!this.state.invalidFields.includes("phoneNumber")}
-										type="tel"
-										name="phoneNumber"
-										placeholder="Phone Number"
-										onChange={this.handleInputChange}
-									/>
-									<FormFeedback>Required</FormFeedback>
-								</Col>
-							</Row>
-							<Row form className="mb-3">
-								<Col>
-									<Input
-										invalid={this.state.invalidFields.includes("password")}
-										valid={!this.state.invalidFields.includes("password")}
-										type="password"
-										name="password"
-										placeholder="Password"
-										onChange={this.handleInputChange}
-									/>
-									<FormFeedback>
-										Required (Must be a minimum of 8 characters long, have 1
-										lower and upper case letter, have 1 number and special
-										character)
-									</FormFeedback>
-								</Col>
-								<Col>
-									<Input
-										invalid={this.state.invalidFields.includes("noMatch")}
-										valid={!this.state.invalidFields.includes("noMatch")}
-										type="password"
-										name="confirmPassword"
-										placeholder="Confirm Password"
-										onChange={this.handleInputChange}
-									/>
-									<FormFeedback>Passwords don't match </FormFeedback>
-								</Col>
-							</Row>
-							<Button color="primary" type="submit">
-								Sign Up
-							</Button>
-						</Form>
-					</CardBody>
-				</Card>
-			</div>
+			<>
+				<NavBar
+					history={this.props.history}
+					location={this.props.location}
+					match={this.props.match}
+				/>
+				<div className="d-flex justify-content-center mt-3">
+					<Card style={{ width: "75%" }}>
+						<CardTitle className="text-center">
+							<h1>Sign Up</h1>
+						</CardTitle>
+						<img
+							src={Logo}
+							alt="logo"
+							style={{ width: "25%", margin: "auto" }}
+						/>
+						<CardBody>
+							<Alert
+								color={this.state.alertColor}
+								isOpen={this.state.isAlertOpen}
+								toggle={this.toggleAlert}
+							>
+								{this.state.alertMessage}
+							</Alert>
+							<Form onSubmit={this.handleSignUpSubmit}>
+								<Row form className="mb-3">
+									<Col>
+										<Input
+											invalid={this.state.invalidFields.includes("firstName")}
+											valid={!this.state.invalidFields.includes("firstName")}
+											type="text"
+											name="firstName"
+											placeholder="First Name"
+											onChange={this.handleInputChange}
+										/>
+										<FormFeedback>Required</FormFeedback>
+									</Col>
+									<Col>
+										<Input
+											valid
+											type="text"
+											name="middleName"
+											placeholder="Middle Name"
+											onChange={this.handleInputChange}
+										/>
+									</Col>
+									<Col>
+										<Input
+											invalid={this.state.invalidFields.includes("lastName")}
+											valid={!this.state.invalidFields.includes("lastName")}
+											type="text"
+											name="lastName"
+											placeholder="Last Name"
+											onChange={this.handleInputChange}
+										/>
+										<FormFeedback>Required</FormFeedback>
+									</Col>
+									<Col>
+										<Input
+											valid
+											type="text"
+											name="suffix"
+											placeholder="Suffix"
+											onChange={this.handleInputChange}
+										/>
+									</Col>
+								</Row>
+								<Row form className="mb-3">
+									<Col>
+										<Input
+											invalid={this.state.invalidFields.includes("email")}
+											valid={!this.state.invalidFields.includes("email")}
+											type="email"
+											name="email"
+											placeholder="Email Address"
+											onChange={this.handleInputChange}
+										/>
+										<FormFeedback>Required</FormFeedback>
+									</Col>
+									<Col>
+										<Input
+											invalid={this.state.invalidFields.includes("phoneNumber")}
+											valid={!this.state.invalidFields.includes("phoneNumber")}
+											type="tel"
+											name="phoneNumber"
+											placeholder="Phone Number"
+											onChange={this.handleInputChange}
+										/>
+										<FormFeedback>Required</FormFeedback>
+									</Col>
+								</Row>
+								<Row form className="mb-3">
+									<Col>
+										<Input
+											invalid={this.state.invalidFields.includes("password")}
+											valid={!this.state.invalidFields.includes("password")}
+											type="password"
+											name="password"
+											placeholder="Password"
+											onChange={this.handleInputChange}
+										/>
+										<FormFeedback>
+											Required (Must be a minimum of 8 characters long, have 1
+											lower and upper case letter, have 1 number and special
+											character)
+										</FormFeedback>
+									</Col>
+									<Col>
+										<Input
+											invalid={this.state.invalidFields.includes("noMatch")}
+											valid={!this.state.invalidFields.includes("noMatch")}
+											type="password"
+											name="confirmPassword"
+											placeholder="Confirm Password"
+											onChange={this.handleInputChange}
+										/>
+										<FormFeedback>Passwords don't match </FormFeedback>
+									</Col>
+								</Row>
+								<Button color="primary" type="submit">
+									Sign Up
+								</Button>
+							</Form>
+						</CardBody>
+					</Card>
+				</div>
+			</>
 		);
 	}
 }

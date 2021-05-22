@@ -1,12 +1,12 @@
 import * as React from "react";
 import { Button, Nav, Navbar, NavbarBrand, NavItem, NavLink } from "reactstrap";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import Logo from "../assets/logo.svg";
 import UserContext from "../context/UserContext";
 import CustomerModal from "./Modals/CustomerModal";
 import AssignmentModal from "./Modals/AssignmentModal";
 
-interface INavBarProps {}
+interface INavBarProps extends RouteComponentProps {}
 interface INavBarState {
 	isAddCustomerModalOpen: boolean;
 	isAddAssignmentModalOpen: boolean;
@@ -25,6 +25,7 @@ export default class NavBar extends React.Component<
 			isAddAssignmentModalOpen: false,
 		};
 	}
+
 	toggleAddCustomerModal = () => {
 		this.setState({
 			isAddCustomerModalOpen: !this.state.isAddCustomerModalOpen,
@@ -113,10 +114,16 @@ export default class NavBar extends React.Component<
 						<CustomerModal
 							isOpen={this.state.isAddCustomerModalOpen}
 							toggle={this.toggleAddCustomerModal}
+							history={this.props.history}
+							location={this.props.location}
+							match={this.props.match}
 						/>
 						<AssignmentModal
 							isOpen={this.state.isAddAssignmentModalOpen}
 							toggle={this.toggleAddAssignmentModal}
+							history={this.props.history}
+							location={this.props.location}
+							match={this.props.match}
 						/>
 					</>
 				)}

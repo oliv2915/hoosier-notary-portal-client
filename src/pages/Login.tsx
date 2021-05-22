@@ -15,6 +15,7 @@ import {
 } from "reactstrap";
 import { RouteComponentProps } from "react-router-dom";
 import { IUserContextUser } from "../interfaces";
+import NavBar from "../components/NavBar";
 
 interface ILoginProps extends RouteComponentProps {}
 
@@ -180,56 +181,67 @@ export default class Login extends React.Component<ILoginProps, ILoginState> {
 		// if user isAuth, push to Dashboard
 		if (this.context.isAuth) this.props.history.push("/dashboard");
 		return (
-			<div className="d-flex justify-content-center mt-3">
-				<Card style={{ width: "75%" }}>
-					<CardTitle className="text-center">
-						<h1>Login</h1>
-					</CardTitle>
-					<img src={Logo} alt="logo" style={{ width: "25%", margin: "auto" }} />
-					<CardBody>
-						<Alert
-							color={this.state.alertColor}
-							isOpen={this.state.isAlertOpen}
-							toggle={this.toggleAlert}
-						>
-							{this.state.alertMessage}
-						</Alert>
-						<Form onSubmit={this.handleLoginSubmit}>
-							<Row form className="mb-3">
-								<Col>
-									<Input
-										invalid={this.state.invalidFields.includes("email")}
-										valid={!this.state.invalidFields.includes("email")}
-										type="email"
-										name="email"
-										placeholder="Email Address"
-										onChange={this.handleInputChange}
-									/>
-									<FormFeedback>Required</FormFeedback>
-								</Col>
-								<Col>
-									<Input
-										invalid={this.state.invalidFields.includes("password")}
-										valid={!this.state.invalidFields.includes("password")}
-										type="password"
-										name="password"
-										placeholder="Password"
-										onChange={this.handleInputChange}
-									/>
-									<FormFeedback>
-										Required (Must be a minimum of 8 characters long, have 1
-										lower and upper case letter, have 1 number and special
-										character)
-									</FormFeedback>
-								</Col>
-							</Row>
-							<Button color="primary" type="submit">
-								Login
-							</Button>
-						</Form>
-					</CardBody>
-				</Card>
-			</div>
+			<>
+				<NavBar
+					history={this.props.history}
+					location={this.props.location}
+					match={this.props.match}
+				/>
+				<div className="d-flex justify-content-center mt-3">
+					<Card style={{ width: "75%" }}>
+						<CardTitle className="text-center">
+							<h1>Login</h1>
+						</CardTitle>
+						<img
+							src={Logo}
+							alt="logo"
+							style={{ width: "25%", margin: "auto" }}
+						/>
+						<CardBody>
+							<Alert
+								color={this.state.alertColor}
+								isOpen={this.state.isAlertOpen}
+								toggle={this.toggleAlert}
+							>
+								{this.state.alertMessage}
+							</Alert>
+							<Form onSubmit={this.handleLoginSubmit}>
+								<Row form className="mb-3">
+									<Col>
+										<Input
+											invalid={this.state.invalidFields.includes("email")}
+											valid={!this.state.invalidFields.includes("email")}
+											type="email"
+											name="email"
+											placeholder="Email Address"
+											onChange={this.handleInputChange}
+										/>
+										<FormFeedback>Required</FormFeedback>
+									</Col>
+									<Col>
+										<Input
+											invalid={this.state.invalidFields.includes("password")}
+											valid={!this.state.invalidFields.includes("password")}
+											type="password"
+											name="password"
+											placeholder="Password"
+											onChange={this.handleInputChange}
+										/>
+										<FormFeedback>
+											Required (Must be a minimum of 8 characters long, have 1
+											lower and upper case letter, have 1 number and special
+											character)
+										</FormFeedback>
+									</Col>
+								</Row>
+								<Button color="primary" type="submit">
+									Login
+								</Button>
+							</Form>
+						</CardBody>
+					</Card>
+				</div>
+			</>
 		);
 	}
 }

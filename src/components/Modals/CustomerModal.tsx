@@ -1,4 +1,5 @@
 import * as React from "react";
+import { RouteComponentProps } from "react-router-dom";
 import {
 	Col,
 	Form,
@@ -15,7 +16,7 @@ import {
 import UserContext from "../../context/UserContext";
 import { ICustomer } from "../../interfaces";
 
-interface ICustomerModalProps {
+interface ICustomerModalProps extends RouteComponentProps {
 	isOpen: boolean;
 	toggle: () => void;
 }
@@ -218,11 +219,13 @@ export default class CustomerModal extends React.Component<
 						if ("error" in data) {
 							return; // do nothing as this is handled when the res.status is checked
 						} else {
-							this.setState({
-								isAlertOpen: true,
-								alertMessage: "Customer Added",
-								alertColor: "success",
-							});
+							// this.setState({
+							// 	isAlertOpen: true,
+							// 	alertMessage: "Customer Added",
+							// 	alertColor: "success",
+							// });
+							this.props.history.push(`/customer?customer=${data.customer.id}`);
+							this.props.toggle();
 						}
 					})
 		);

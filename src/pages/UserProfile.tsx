@@ -6,6 +6,7 @@ import UserContext from "../context/UserContext";
 import ProfileAddressCard from "../components/Profile/ProfileAddressCard";
 import ProfileCredentialCard from "../components/Profile/ProfileCredentialCard";
 import ProfileUserCard from "../components/Profile/ProfileUserCard";
+import NavBar from "../components/NavBar";
 
 interface IUserProfileProps extends RouteComponentProps {}
 
@@ -22,7 +23,13 @@ export default class UserProfile extends React.Component<
 		// if not auth, redirect to home (login)
 		if (!this.context.isAuth) this.props.history.push("/");
 		return (
-			<div>
+			<>
+				<NavBar
+					history={this.props.history}
+					location={this.props.location}
+					match={this.props.match}
+				/>
+
 				<Row className="mt-3">
 					<Col md="4" className="mb-3">
 						<ProfileUserCard
@@ -43,7 +50,7 @@ export default class UserProfile extends React.Component<
 						</>
 					)}
 				</Row>
-			</div>
+			</>
 		);
 	}
 }

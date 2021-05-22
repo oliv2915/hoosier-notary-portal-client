@@ -1,4 +1,5 @@
 import * as React from "react";
+import { RouteComponentProps } from "react-router-dom";
 import {
 	Col,
 	Form,
@@ -16,7 +17,7 @@ import {
 import UserContext from "../../context/UserContext";
 import { IAssignment, ICustomer } from "../../interfaces";
 
-interface IAssignmentModalProps {
+interface IAssignmentModalProps extends RouteComponentProps {
 	isOpen: boolean;
 	toggle: () => void;
 }
@@ -385,11 +386,8 @@ export default class AssignmentModal extends React.Component<
 			})
 			.then((data) => {
 				if ("error" in data) return; // nothing to do here, handled above
-				this.setState({
-					isAlertOpen: true,
-					alertColor: "success",
-					alertMessage: "Assignment Added",
-				});
+				this.props.history.push(`/assignment?assignment=${data.assignment.id}`);
+				this.props.toggle();
 			});
 	};
 
