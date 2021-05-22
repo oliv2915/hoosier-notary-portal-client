@@ -18,6 +18,8 @@ import { IAddress, ICustomer } from "../../interfaces";
 interface IAddressModalProps {
 	isOpen: boolean;
 	toggle: () => void;
+	updateAddressTable: () => void;
+	addressToEdit?: IAddress;
 }
 
 interface IAddressModalState {
@@ -28,6 +30,7 @@ interface IAddressModalState {
 	isAlertOpen: boolean;
 	alertMessage?: string;
 	alertColor?: string;
+	editingAddress: boolean;
 }
 
 export default class AddressModal extends React.Component<
@@ -44,30 +47,47 @@ export default class AddressModal extends React.Component<
 			formValid: false,
 			invalidFields: [],
 			isAlertOpen: false,
+			editingAddress: false,
 		};
 	}
 
 	modalDidOpen = () => {
-		this.validateInput();
-		if (this.context.user.isEmployee) {
-			fetch(`${process.env.REACT_APP_API_SERVER}/customer/all`, {
-				method: "GET",
-				headers: new Headers({
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${this.context.token}`,
-				}),
-			})
-				.then((res) => res.json())
-				.then((data) => {
-					this.setState({
-						customers: data.customers,
-					});
-				});
-			this.validateInput();
+		// editing an address
+		if (this.props.addressToEdit) {
+			this.setState(
+				{
+					address: this.props.addressToEdit,
+					editingAddress: true,
+				},
+				() => this.validateInput()
+			);
 		} else {
-			this.setState({
-				address: { userId: this.context.user.id },
-			});
+			// adding an address for customers and notaries
+			if (this.context.user.isEmployee) {
+				// adding customer address
+				fetch(`${process.env.REACT_APP_API_SERVER}/customer/all`, {
+					method: "GET",
+					headers: new Headers({
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${this.context.token}`,
+					}),
+				})
+					.then((res) => res.json())
+					.then((data) => {
+						this.setState({
+							customers: data.customers,
+						});
+					});
+				this.validateInput();
+			} else {
+				// adding notary address
+				this.setState(
+					{
+						address: { userId: this.context.user.id },
+					},
+					() => this.validateInput()
+				);
+			}
 		}
 	};
 
@@ -80,6 +100,7 @@ export default class AddressModal extends React.Component<
 			isAlertOpen: false,
 			alertColor: undefined,
 			alertMessage: undefined,
+			editingAddress: false,
 		});
 	};
 
@@ -90,9 +111,10 @@ export default class AddressModal extends React.Component<
 					this.setState(
 						{
 							address: {
+								id: this.state.address.id,
 								userId: this.state.address.userId,
-								customerId: this.state.address.customerId,
-								streetOne: event.target.value,
+								customerId: event.target.value,
+								streetOne: this.state.address.streetOne,
 								streetTwo: this.state.address.streetTwo,
 								city: this.state.address.city,
 								state: this.state.address.state,
@@ -108,6 +130,7 @@ export default class AddressModal extends React.Component<
 				this.setState(
 					{
 						address: {
+							id: this.state.address.id,
 							userId: this.state.address.userId,
 							customerId: this.state.address.customerId,
 							streetOne: event.target.value,
@@ -125,6 +148,7 @@ export default class AddressModal extends React.Component<
 				this.setState(
 					{
 						address: {
+							id: this.state.address.id,
 							userId: this.state.address.userId,
 							customerId: this.state.address.customerId,
 							streetOne: this.state.address.streetOne,
@@ -142,6 +166,7 @@ export default class AddressModal extends React.Component<
 				this.setState(
 					{
 						address: {
+							id: this.state.address.id,
 							userId: this.state.address.userId,
 							customerId: this.state.address.customerId,
 							streetOne: this.state.address.streetOne,
@@ -159,6 +184,7 @@ export default class AddressModal extends React.Component<
 				this.setState(
 					{
 						address: {
+							id: this.state.address.id,
 							userId: this.state.address.userId,
 							customerId: this.state.address.customerId,
 							streetOne: this.state.address.streetOne,
@@ -176,6 +202,7 @@ export default class AddressModal extends React.Component<
 				this.setState(
 					{
 						address: {
+							id: this.state.address.id,
 							userId: this.state.address.userId,
 							customerId: this.state.address.customerId,
 							streetOne: this.state.address.streetOne,
@@ -193,6 +220,7 @@ export default class AddressModal extends React.Component<
 				this.setState(
 					{
 						address: {
+							id: this.state.address.id,
 							userId: this.state.address.userId,
 							customerId: this.state.address.customerId,
 							streetOne: this.state.address.streetOne,
@@ -251,9 +279,12 @@ export default class AddressModal extends React.Component<
 		}
 	};
 
-	submitInput = () => {
+	addAddress = () => {
+		// adding an address
 		if (this.context.user.isEmployee) {
+			// employee adding a customer address
 		} else {
+			// notary adding own address
 			fetch(`${process.env.REACT_APP_API_SERVER}/address/add`, {
 				method: "POST",
 				headers: new Headers({
@@ -268,8 +299,8 @@ export default class AddressModal extends React.Component<
 					if (res.status !== 201) {
 						this.setState({
 							isAlertOpen: true,
-							alertColor: "danger",
-							alertMessage: "Unable to add address. Check the fields below",
+							alertColor: "info",
+							alertMessage: "Unable to add address. Check your enteries",
 						});
 					}
 					return res.json();
@@ -278,9 +309,83 @@ export default class AddressModal extends React.Component<
 					if ("error" in data) {
 						return; // handled above
 					} else {
+						this.props.updateAddressTable();
 						this.props.toggle();
 					}
 				});
+		}
+	};
+
+	editAddress = () => {
+		console.log(this.state.address);
+		// submit update to server
+		if (this.context.user.isEmployee) {
+			// employee editing a customer address
+		} else {
+			// notary editing own address
+			fetch(`${process.env.REACT_APP_API_SERVER}/address/update`, {
+				method: "PUT",
+				headers: new Headers({
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${this.context.token}`,
+				}),
+				body: JSON.stringify({
+					address: this.state.address,
+				}),
+			})
+				.then((res) => {
+					if (res.status !== 200) {
+						this.setState({
+							isAlertOpen: true,
+							alertColor: "info",
+							alertMessage: "Unable to edit address. Check your enteries",
+						});
+					}
+					return res.json();
+				})
+				.then((data) => {
+					if ("error" in data) {
+						return; // handled above
+					} else {
+						this.props.updateAddressTable();
+						this.props.toggle();
+					}
+				});
+		}
+	};
+
+	deleteAddress = () => {
+		fetch(`${process.env.REACT_APP_API_SERVER}/address/delete`, {
+			method: "DELETE",
+			headers: new Headers({
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${this.context.token}`,
+			}),
+			body: JSON.stringify({
+				address: this.state.address,
+			}),
+		})
+			.then((res) => {
+				if (res.status !== 200) {
+					this.setState({
+						isAlertOpen: true,
+						alertColor: "info",
+						alertMessage: "Unable to remove this address",
+					});
+				}
+				return res.json();
+			})
+			.then((data) => {
+				this.props.updateAddressTable();
+				this.props.toggle();
+			});
+	};
+
+	submitInput = () => {
+		if (this.state.editingAddress) {
+			this.editAddress();
+		} else {
+			this.addAddress();
 		}
 	};
 
@@ -292,7 +397,9 @@ export default class AddressModal extends React.Component<
 				onOpened={this.modalDidOpen}
 				onClosed={this.modalDidClose}
 			>
-				<ModalHeader toggle={this.props.toggle}>Add Address</ModalHeader>
+				<ModalHeader toggle={this.props.toggle}>
+					{this.props.addressToEdit ? "Edit Address" : "Add Address"}
+				</ModalHeader>
 				<ModalBody>
 					<Alert isOpen={this.state.isAlertOpen} color={this.state.alertColor}>
 						{this.state.alertMessage}
@@ -407,9 +514,24 @@ export default class AddressModal extends React.Component<
 								</FormGroup>
 							</Col>
 						</Row>
-						<Button type="submit" color="warning">
-							Add Address
-						</Button>
+						<Row>
+							<Col>
+								<Button type="submit" color="warning">
+									{this.props.addressToEdit ? "Edit Address" : "Add Address"}
+								</Button>
+							</Col>
+							{this.props.addressToEdit && (
+								<Col>
+									<Button
+										type="button"
+										color="danger"
+										onClick={this.deleteAddress}
+									>
+										Delete Address
+									</Button>
+								</Col>
+							)}
+						</Row>
 					</Form>
 				</ModalBody>
 			</Modal>

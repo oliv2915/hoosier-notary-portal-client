@@ -35,7 +35,7 @@ export default class UserProfile extends React.Component<
 							</Col>
 							<Col md="4" className="mb-3">
 								<ProfileCredentialCard />
-							</Col>{" "}
+							</Col>
 						</>
 					)}
 				</Row>

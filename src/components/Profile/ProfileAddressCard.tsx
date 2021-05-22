@@ -1,4 +1,4 @@
-import React from "react";
+import React, { BaseSyntheticEvent } from "react";
 import UserContext from "../../context/UserContext";
 import { Button, Card, CardBody, CardHeader, Table } from "reactstrap";
 import { IAddress } from "../../interfaces";
@@ -8,7 +8,9 @@ interface IProfileAddressCardProps {}
 
 interface IProfileAddressCardState {
 	isAddAddressModalOpen: boolean;
+	isEditAddressModalOpen: boolean;
 	addresses: IAddress[];
+	addressToEdit: IAddress;
 }
 
 export default class ProfileAddressCard extends React.Component<
@@ -21,7 +23,9 @@ export default class ProfileAddressCard extends React.Component<
 		super(props);
 		this.state = {
 			isAddAddressModalOpen: false,
+			isEditAddressModalOpen: false,
 			addresses: [],
+			addressToEdit: {},
 		};
 	}
 
@@ -45,10 +49,29 @@ export default class ProfileAddressCard extends React.Component<
 			});
 	};
 
+	updateAddressTable = () => {
+		this.fetchAddresses();
+	};
+
 	toggleAddAddressModal = () => {
 		this.setState({
 			isAddAddressModalOpen: !this.state.isAddAddressModalOpen,
 		});
+	};
+
+	toggleEditAddressModal = () => {
+		this.setState({
+			isEditAddressModalOpen: !this.state.isEditAddressModalOpen,
+		});
+	};
+
+	addressRowClicked = (event: BaseSyntheticEvent) => {
+		this.setState(
+			{
+				addressToEdit: this.state.addresses[event.currentTarget.id],
+			},
+			() => this.toggleEditAddressModal()
+		);
 	};
 
 	render() {
@@ -67,7 +90,7 @@ export default class ProfileAddressCard extends React.Component<
 						</Button>
 					</CardHeader>
 					<CardBody>
-						<Table size="sm">
+						<Table size="sm" hover responsive borderless>
 							<thead>
 								<tr>
 									<th>Street</th>
@@ -79,7 +102,12 @@ export default class ProfileAddressCard extends React.Component<
 							<tbody>
 								{this.state.addresses.map((address, idx) => {
 									return (
-										<tr key={idx}>
+										<tr
+											key={idx}
+											id={`${idx}`}
+											onClick={this.addressRowClicked}
+											style={{ cursor: "pointer" }}
+										>
 											<td>{`${address.streetOne} ${
 												address.streetTwo ? address.streetTwo : ""
 											}`}</td>
@@ -93,9 +121,18 @@ export default class ProfileAddressCard extends React.Component<
 						</Table>
 					</CardBody>
 				</Card>
+				{/* Add Address */}
 				<AddressModal
 					isOpen={this.state.isAddAddressModalOpen}
 					toggle={this.toggleAddAddressModal}
+					updateAddressTable={this.updateAddressTable}
+				/>
+				{/* Edit Address */}
+				<AddressModal
+					isOpen={this.state.isEditAddressModalOpen}
+					toggle={this.toggleEditAddressModal}
+					addressToEdit={this.state.addressToEdit}
+					updateAddressTable={this.updateAddressTable}
 				/>
 			</>
 		);

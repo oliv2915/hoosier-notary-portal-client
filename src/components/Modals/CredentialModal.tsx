@@ -19,6 +19,8 @@ import { ICommission } from "../../interfaces";
 interface ICredentialModalProps {
 	isOpen: boolean;
 	toggle: () => void;
+	updateCredentialTable: () => void;
+	credentialToEdit?: ICommission;
 }
 
 interface ICredentialModalState {
@@ -28,6 +30,7 @@ interface ICredentialModalState {
 	isAlertOpen: boolean;
 	alertMessage?: string;
 	alertColor?: string;
+	editingCredential: boolean;
 }
 
 export default class CredentialModal extends React.Component<
@@ -43,11 +46,22 @@ export default class CredentialModal extends React.Component<
 			formValid: false,
 			invalidFields: [],
 			isAlertOpen: false,
+			editingCredential: false,
 		};
 	}
 
 	modalDidOpen = () => {
-		this.validateInput();
+		if (this.props.credentialToEdit) {
+			this.setState(
+				{
+					editingCredential: true,
+					commission: this.props.credentialToEdit,
+				},
+				() => this.validateInput()
+			);
+		} else {
+			this.validateInput();
+		}
 	};
 
 	modalDidClose = () => {
@@ -55,6 +69,7 @@ export default class CredentialModal extends React.Component<
 			commission: {},
 			formValid: false,
 			invalidFields: [],
+			editingCredential: false,
 			isAlertOpen: false,
 			alertMessage: undefined,
 			alertColor: undefined,
@@ -67,6 +82,8 @@ export default class CredentialModal extends React.Component<
 				this.setState(
 					{
 						commission: {
+							id: this.state.commission.id,
+							userId: this.state.commission.userId,
 							commissionNumber: event.target.value,
 							nameOnCommission: this.state.commission.nameOnCommission,
 							commissionExpireDate: this.state.commission.commissionExpireDate,
@@ -81,6 +98,8 @@ export default class CredentialModal extends React.Component<
 				this.setState(
 					{
 						commission: {
+							id: this.state.commission.id,
+							userId: this.state.commission.userId,
 							commissionNumber: this.state.commission.commissionNumber,
 							nameOnCommission: event.target.value,
 							commissionExpireDate: this.state.commission.commissionExpireDate,
@@ -95,6 +114,8 @@ export default class CredentialModal extends React.Component<
 				this.setState(
 					{
 						commission: {
+							id: this.state.commission.id,
+							userId: this.state.commission.userId,
 							commissionNumber: this.state.commission.commissionNumber,
 							nameOnCommission: this.state.commission.nameOnCommission,
 							commissionExpireDate: event.target.value,
@@ -109,6 +130,8 @@ export default class CredentialModal extends React.Component<
 				this.setState(
 					{
 						commission: {
+							id: this.state.commission.id,
+							userId: this.state.commission.userId,
 							commissionNumber: this.state.commission.commissionNumber,
 							nameOnCommission: this.state.commission.nameOnCommission,
 							commissionExpireDate: this.state.commission.commissionExpireDate,
@@ -123,6 +146,8 @@ export default class CredentialModal extends React.Component<
 				this.setState(
 					{
 						commission: {
+							id: this.state.commission.id,
+							userId: this.state.commission.userId,
 							commissionNumber: this.state.commission.commissionNumber,
 							nameOnCommission: this.state.commission.nameOnCommission,
 							commissionExpireDate: this.state.commission.commissionExpireDate,
@@ -180,9 +205,9 @@ export default class CredentialModal extends React.Component<
 		}
 	};
 
-	submitInput = () => {
+	addCredential = () => {
 		fetch(`${process.env.REACT_APP_API_SERVER}/commission/add`, {
-			method: "POSt",
+			method: "POST",
 			headers: new Headers({
 				"Content-Type": "application/json",
 				Authorization: `Bearer ${this.context.token}`,
@@ -207,9 +232,51 @@ export default class CredentialModal extends React.Component<
 				if ("error" in data) {
 					return; // handled above
 				} else {
+					this.props.updateCredentialTable();
 					this.props.toggle();
 				}
 			});
+	};
+
+	editCredential = () => {
+		fetch(`${process.env.REACT_APP_API_SERVER}/commission/update`, {
+			method: "PUT",
+			headers: new Headers({
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${this.context.token}`,
+			}),
+			body: JSON.stringify({
+				commission: this.state.commission,
+			}),
+		})
+			.then((res) => {
+				if (res.status !== 200) {
+					if (res.status === 409) {
+						this.setState({
+							isAlertOpen: true,
+							alertMessage: "Commission Number already in use",
+							alertColor: "danger",
+						});
+					}
+				}
+				return res.json();
+			})
+			.then((data) => {
+				if ("error" in data) {
+					return; // handled above
+				} else {
+					this.props.updateCredentialTable();
+					this.props.toggle();
+				}
+			});
+	};
+
+	submitInput = () => {
+		if (this.state.editingCredential) {
+			this.editCredential();
+		} else {
+			this.addCredential();
+		}
 	};
 	render() {
 		return (
@@ -219,7 +286,9 @@ export default class CredentialModal extends React.Component<
 				onOpened={this.modalDidOpen}
 				onClosed={this.modalDidClose}
 			>
-				<ModalHeader toggle={this.props.toggle}>Add Credential</ModalHeader>
+				<ModalHeader toggle={this.props.toggle}>
+					{this.state.editingCredential ? "Edit Credential" : "Add Credential"}
+				</ModalHeader>
 				<ModalBody>
 					<Alert isOpen={this.state.isAlertOpen} color={this.state.alertColor}>
 						{this.state.alertMessage}
@@ -228,9 +297,12 @@ export default class CredentialModal extends React.Component<
 						<Row form>
 							<Col>
 								<FormGroup>
+									<Label htmlFor="commission-number">Commission Number</Label>
 									<Input
 										type="text"
 										name="commissionNumber"
+										id="commission-number"
+										value={this.state.commission.commissionNumber}
 										placeholder="Commission Number"
 										valid={
 											!this.state.invalidFields.includes("commissionNumber")
@@ -245,9 +317,12 @@ export default class CredentialModal extends React.Component<
 							</Col>
 							<Col>
 								<FormGroup>
+									<Label htmlFor="name-on-commission">Name on Commission</Label>
 									<Input
 										type="text"
 										name="nameOnCommission"
+										id="name-on-commission"
+										value={this.state.commission.nameOnCommission}
 										placeholder="Name on Commission"
 										valid={
 											!this.state.invalidFields.includes("nameOnCommission")
@@ -264,10 +339,12 @@ export default class CredentialModal extends React.Component<
 						<Row form>
 							<Col>
 								<FormGroup>
-									<Label>Commission Expire Date</Label>
+									<Label htmlFor="expire-date">Commission Expire Date</Label>
 									<Input
 										type="date"
 										name="commissionExpireDate"
+										id="expire-date"
+										value={this.state.commission.commissionExpireDate?.toString()}
 										valid={
 											!this.state.invalidFields.includes("commissionExpireDate")
 										}
@@ -283,9 +360,12 @@ export default class CredentialModal extends React.Component<
 						<Row form>
 							<Col>
 								<FormGroup>
+									<Label htmlFor="state">Commission State</Label>
 									<Input
 										type="text"
 										name="commissionState"
+										id="state"
+										value={this.state.commission.commissionState}
 										placeholder="Commission State"
 										valid={
 											!this.state.invalidFields.includes("commissionState")
@@ -300,9 +380,12 @@ export default class CredentialModal extends React.Component<
 							</Col>
 							<Col>
 								<FormGroup>
+									<Label htmlFor="residence">County of Residence</Label>
 									<Input
 										type="text"
 										name="countyOfResidence"
+										id="residence"
+										value={this.state.commission.countyOfResidence}
 										placeholder="County of Residence"
 										valid={
 											!this.state.invalidFields.includes("countyOfResidence")
@@ -317,7 +400,9 @@ export default class CredentialModal extends React.Component<
 							</Col>
 						</Row>
 						<Button type="submit" color="warning">
-							Add Commission
+							{this.state.editingCredential
+								? "Edit Commission"
+								: "Add Commission"}
 						</Button>
 					</Form>
 				</ModalBody>
