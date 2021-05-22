@@ -1,4 +1,5 @@
 import * as React from "react";
+import { RouteComponentProps } from "react-router-dom";
 import {
 	Col,
 	Form,
@@ -11,18 +12,23 @@ import {
 	Button,
 	FormFeedback,
 	Alert,
+	Label,
 } from "reactstrap";
 import UserContext from "../../context/UserContext";
 import { IUserContextUser } from "../../interfaces";
 
-interface IEditUserModalProps {
+interface IUserModalProps extends RouteComponentProps {
 	isOpen: boolean;
 	toggle: () => void;
+	userProfile: IUserContextUser;
+	updateProfile: () => void;
 }
 
-interface IEditUserModalState {
+interface IUserModalState {
 	isOpen: boolean;
 	user: IEditInfoUser;
+	editingNotary: boolean;
+	editingEmployee: boolean;
 	invalidFields: string[];
 	formValid: boolean;
 	isAlertOpen: boolean;
@@ -35,16 +41,18 @@ interface IEditInfoUser extends IUserContextUser {
 	confirmPassword?: string;
 }
 
-export default class EditUserModal extends React.Component<
-	IEditUserModalProps,
-	IEditUserModalState
+export default class UserModal extends React.Component<
+	IUserModalProps,
+	IUserModalState
 > {
 	static contextType = UserContext;
 	context!: React.ContextType<typeof UserContext>;
-	constructor(props: IEditUserModalProps) {
+	constructor(props: IUserModalProps) {
 		super(props);
 		this.state = {
 			user: {},
+			editingNotary: false,
+			editingEmployee: false,
 			isOpen: false,
 			invalidFields: [],
 			formValid: false,
@@ -53,36 +61,69 @@ export default class EditUserModal extends React.Component<
 	}
 
 	modalDidOpen = () => {
-		this.setState(
-			{
-				user: this.context.user,
-				isAlertOpen: true,
-				alertColor: "info",
-				alertMessage:
-					"Password is required to save changes. This will change your password. Password must be a minimum of 8 characters long, have 1 lower and upper case letter, and have 1 number and special character",
-			},
-			() => this.validateFormFields()
-		);
+		if (
+			this.props.userProfile.isEmployee &&
+			this.context.user.isEmployee &&
+			!this.context.user.isSuper
+		) {
+			this.props.history.push("/dashboard");
+			this.props.toggle();
+		} else if (this.props.userProfile.id === this.context.user.id) {
+			// updating own record
+			this.setState(
+				{
+					user: this.props.userProfile,
+					isAlertOpen: true,
+					alertColor: "info",
+					alertMessage:
+						"Password is required to save changes. This will change your password. Password must be a minimum of 8 characters long, have 1 lower and upper case letter, and have 1 number and special character",
+				},
+				() => this.validateInput()
+			);
+		} else if (
+			this.props.userProfile.isNotary &&
+			this.context.user.isEmployee
+		) {
+			// employee updating a notary record
+			this.setState(
+				{
+					editingNotary: true,
+					user: this.props.userProfile,
+				},
+				() => this.validateInput()
+			);
+		} else if (this.props.userProfile.isEmployee && this.context.user.isSuper) {
+			// super updating employee record
+			this.setState(
+				{
+					editingEmployee: true,
+					user: this.props.userProfile,
+				},
+				() => this.validateInput()
+			);
+		}
 	};
 
 	modalDidExit = () => {
 		this.setState(
 			{
 				user: {},
-				isAlertOpen: true,
-				alertColor: "info",
-				alertMessage:
-					"Password is required to save changes. This will change your password. Password must be a minimum of 8 characters long, have 1 lower and upper case letter, and have 1 number and special character",
+				invalidFields: [],
+				editingNotary: false,
+				editingEmployee: false,
+				isAlertOpen: false,
+				alertColor: undefined,
+				alertMessage: undefined,
 			},
-			() => this.validateFormFields()
+			() => this.validateInput()
 		);
 	};
 
 	handleSubmit = (event: React.BaseSyntheticEvent) => {
 		event.preventDefault();
-		this.validateFormFields();
 		if (this.state.formValid) {
-			this.submitUpdate();
+			this.editUser();
+			// console.log(this.state);
 		} else {
 			this.setState({
 				isAlertOpen: true,
@@ -92,7 +133,7 @@ export default class EditUserModal extends React.Component<
 		}
 	};
 
-	submitUpdate = () => {
+	editUser = () => {
 		fetch(`${process.env.REACT_APP_API_SERVER}/user/update`, {
 			method: "PUT",
 			headers: new Headers({
@@ -118,7 +159,7 @@ export default class EditUserModal extends React.Component<
 			})
 			.then((data) => {
 				if (data) {
-					this.context.updateUserContext();
+					this.props.updateProfile();
 					this.props.toggle();
 				}
 			});
@@ -131,6 +172,7 @@ export default class EditUserModal extends React.Component<
 				this.setState(
 					{
 						user: {
+							id: this.state.user.id,
 							firstName: event.target.value,
 							middleName: this.state.user.middleName,
 							lastName: this.state.user.lastName,
@@ -146,13 +188,14 @@ export default class EditUserModal extends React.Component<
 							isSuper: this.state.user.isSuper,
 						},
 					},
-					() => this.validateFormFields()
+					() => this.validateInput()
 				);
 				break;
 			case "middleName":
 				this.setState(
 					{
 						user: {
+							id: this.state.user.id,
 							firstName: this.state.user.firstName,
 							middleName: event.target.value,
 							lastName: this.state.user.lastName,
@@ -168,13 +211,14 @@ export default class EditUserModal extends React.Component<
 							isSuper: this.state.user.isSuper,
 						},
 					},
-					() => this.validateFormFields()
+					() => this.validateInput()
 				);
 				break;
 			case "lastName":
 				this.setState(
 					{
 						user: {
+							id: this.state.user.id,
 							firstName: this.state.user.firstName,
 							middleName: this.state.user.middleName,
 							lastName: event.target.value,
@@ -190,13 +234,14 @@ export default class EditUserModal extends React.Component<
 							isSuper: this.state.user.isSuper,
 						},
 					},
-					() => this.validateFormFields()
+					() => this.validateInput()
 				);
 				break;
 			case "suffix":
 				this.setState(
 					{
 						user: {
+							id: this.state.user.id,
 							firstName: this.state.user.firstName,
 							middleName: this.state.user.middleName,
 							lastName: this.state.user.lastName,
@@ -212,13 +257,14 @@ export default class EditUserModal extends React.Component<
 							isSuper: this.state.user.isSuper,
 						},
 					},
-					() => this.validateFormFields()
+					() => this.validateInput()
 				);
 				break;
 			case "phoneNumber":
 				this.setState(
 					{
 						user: {
+							id: this.state.user.id,
 							firstName: this.state.user.firstName,
 							middleName: this.state.user.middleName,
 							lastName: this.state.user.lastName,
@@ -234,13 +280,14 @@ export default class EditUserModal extends React.Component<
 							isSuper: this.state.user.isSuper,
 						},
 					},
-					() => this.validateFormFields()
+					() => this.validateInput()
 				);
 				break;
 			case "email":
 				this.setState(
 					{
 						user: {
+							id: this.state.user.id,
 							firstName: this.state.user.firstName,
 							middleName: this.state.user.middleName,
 							lastName: this.state.user.lastName,
@@ -256,13 +303,14 @@ export default class EditUserModal extends React.Component<
 							isSuper: this.state.user.isSuper,
 						},
 					},
-					() => this.validateFormFields()
+					() => this.validateInput()
 				);
 				break;
 			case "password":
 				this.setState(
 					{
 						user: {
+							id: this.state.user.id,
 							firstName: this.state.user.firstName,
 							middleName: this.state.user.middleName,
 							lastName: this.state.user.lastName,
@@ -278,13 +326,14 @@ export default class EditUserModal extends React.Component<
 							isSuper: this.state.user.isSuper,
 						},
 					},
-					() => this.validateFormFields()
+					() => this.validateInput()
 				);
 				break;
 			case "confirmPassword":
 				this.setState(
 					{
 						user: {
+							id: this.state.user.id,
 							firstName: this.state.user.firstName,
 							middleName: this.state.user.middleName,
 							lastName: this.state.user.lastName,
@@ -300,13 +349,14 @@ export default class EditUserModal extends React.Component<
 							isSuper: this.state.user.isSuper,
 						},
 					},
-					() => this.validateFormFields()
+					() => this.validateInput()
 				);
 				break;
 			case "activeNotary":
 				this.setState(
 					{
 						user: {
+							id: this.state.user.id,
 							firstName: this.state.user.firstName,
 							middleName: this.state.user.middleName,
 							lastName: this.state.user.lastName,
@@ -322,13 +372,14 @@ export default class EditUserModal extends React.Component<
 							isSuper: this.state.user.isSuper,
 						},
 					},
-					() => this.validateFormFields()
+					() => this.validateInput()
 				);
 				break;
 			case "activeEmployee":
 				this.setState(
 					{
 						user: {
+							id: this.state.user.id,
 							firstName: this.state.user.firstName,
 							middleName: this.state.user.middleName,
 							lastName: this.state.user.lastName,
@@ -344,13 +395,14 @@ export default class EditUserModal extends React.Component<
 							isSuper: this.state.user.isSuper,
 						},
 					},
-					() => this.validateFormFields()
+					() => this.validateInput()
 				);
 				break;
 			case "superEmployee":
 				this.setState(
 					{
 						user: {
+							id: this.state.user.id,
 							firstName: this.state.user.firstName,
 							middleName: this.state.user.middleName,
 							lastName: this.state.user.lastName,
@@ -366,7 +418,7 @@ export default class EditUserModal extends React.Component<
 							isSuper: event.target.value === "true" ? true : false,
 						},
 					},
-					() => this.validateFormFields()
+					() => this.validateInput()
 				);
 				break;
 			default:
@@ -374,7 +426,7 @@ export default class EditUserModal extends React.Component<
 		}
 	};
 
-	validateFormFields = () => {
+	validateInput = () => {
 		const invalidFields: string[] = [];
 		if (!this.state.user.firstName) invalidFields.push("firstName");
 		if (!this.state.user.lastName) invalidFields.push("lastName");
@@ -390,17 +442,20 @@ export default class EditUserModal extends React.Component<
 			)
 		)
 			invalidFields.push("email");
-		if (
-			!this.state.user.password?.match(
-				/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/
+		if (this.props.userProfile.id === this.context.user.id) {
+			//if id's match, updating own record, password check is required
+			if (
+				!this.state.user.password?.match(
+					/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,}$/
+				)
 			)
-		)
-			invalidFields.push("password");
-		if (
-			this.state.user.password !== this.state.user.confirmPassword ||
-			!this.state.user.confirmPassword
-		)
-			invalidFields.push("noMatch");
+				invalidFields.push("password");
+			if (
+				this.state.user.password !== this.state.user.confirmPassword ||
+				!this.state.user.confirmPassword
+			)
+				invalidFields.push("noMatch");
+		}
 		if (invalidFields.length > 0) {
 			this.setState({
 				formValid: false,
@@ -431,11 +486,13 @@ export default class EditUserModal extends React.Component<
 					<Form>
 						<Row form className="mb-3">
 							<Col>
+								<Label htmlFor="first-name">First Name</Label>
 								<Input
 									invalid={this.state.invalidFields.includes("firstName")}
 									valid={!this.state.invalidFields.includes("firstName")}
 									type="text"
 									name="firstName"
+									id="first-name"
 									value={this.state.user.firstName}
 									placeholder="First name"
 									onChange={this.handleInputChange}
@@ -443,10 +500,12 @@ export default class EditUserModal extends React.Component<
 								<FormFeedback>Required</FormFeedback>
 							</Col>
 							<Col>
+								<Label htmlFor="middle-name">Middle Name</Label>
 								<Input
 									valid
 									type="text"
 									name="middleName"
+									id="middle-name"
 									value={
 										this.state.user.middleName ? this.state.user.middleName : ""
 									}
@@ -455,11 +514,13 @@ export default class EditUserModal extends React.Component<
 								/>
 							</Col>
 							<Col>
+								<Label htmlFor="last-name">Last Name</Label>
 								<Input
 									invalid={this.state.invalidFields.includes("lastName")}
 									valid={!this.state.invalidFields.includes("lastName")}
 									type="text"
 									name="lastName"
+									id="last-name"
 									value={this.state.user.lastName}
 									placeholder="Last Name"
 									onChange={this.handleInputChange}
@@ -467,10 +528,12 @@ export default class EditUserModal extends React.Component<
 								<FormFeedback>Required</FormFeedback>
 							</Col>
 							<Col>
+								<Label htmlFor="suffix">Suffix</Label>
 								<Input
 									valid
 									type="text"
 									name="suffix"
+									id="suffix"
 									value={this.state.user.suffix ? this.state.user.suffix : ""}
 									placeholder="Suffix"
 									onChange={this.handleInputChange}
@@ -479,11 +542,13 @@ export default class EditUserModal extends React.Component<
 						</Row>
 						<Row form className="mb-3">
 							<Col>
+								<Label htmlFor="email">Email Address</Label>
 								<Input
 									invalid={this.state.invalidFields.includes("email")}
 									valid={!this.state.invalidFields.includes("email")}
 									type="text"
 									name="email"
+									id="email"
 									value={this.state.user.email}
 									placeholder="Email Address"
 									onChange={this.handleInputChange}
@@ -491,11 +556,13 @@ export default class EditUserModal extends React.Component<
 								<FormFeedback>Required</FormFeedback>
 							</Col>
 							<Col>
+								<Label htmlFor="phone-number">Phone Number</Label>
 								<Input
 									invalid={this.state.invalidFields.includes("phoneNumber")}
 									valid={!this.state.invalidFields.includes("phoneNumber")}
 									type="text"
 									name="phoneNumber"
+									id="phone-number"
 									value={this.state.user.phoneNumber}
 									placeholder="Phone Number"
 									onChange={this.handleInputChange}
@@ -503,31 +570,91 @@ export default class EditUserModal extends React.Component<
 								<FormFeedback>Required</FormFeedback>
 							</Col>
 						</Row>
+						{/* If id's match, updating own record, show password fields */}
+						{this.props.userProfile.id === this.context.user.id && (
+							<>
+								<Row form>
+									<Col>
+										<Label htmlFor="password">Password</Label>
+										<Input
+											invalid={this.state.invalidFields.includes("password")}
+											valid={!this.state.invalidFields.includes("password")}
+											value={this.state.user.password}
+											type="password"
+											name="password"
+											id="password"
+											placeholder="Password"
+											onChange={this.handleInputChange}
+										/>
+										<FormFeedback>Required</FormFeedback>
+									</Col>
+									<Col>
+										<Label htmlFor="confirm-password">Confirm Password</Label>
+										<Input
+											invalid={this.state.invalidFields.includes("noMatch")}
+											valid={!this.state.invalidFields.includes("noMatch")}
+											value={this.state.user.confirmPassword}
+											type="password"
+											name="confirmPassword"
+											id="confirm-password"
+											placeholder="Confirm Password"
+											onChange={this.handleInputChange}
+										/>
+										<FormFeedback>Passwords don't match </FormFeedback>
+									</Col>
+								</Row>
+							</>
+						)}
 						<Row form>
-							<Col>
-								<Input
-									invalid={this.state.invalidFields.includes("password")}
-									valid={!this.state.invalidFields.includes("password")}
-									value={this.state.user.password}
-									type="password"
-									name="password"
-									placeholder="Password"
-									onChange={this.handleInputChange}
-								/>
-								<FormFeedback>Required</FormFeedback>
-							</Col>
-							<Col>
-								<Input
-									invalid={this.state.invalidFields.includes("noMatch")}
-									valid={!this.state.invalidFields.includes("noMatch")}
-									value={this.state.user.confirmPassword}
-									type="password"
-									name="confirmPassword"
-									placeholder="Confirm Password"
-									onChange={this.handleInputChange}
-								/>
-								<FormFeedback>Passwords don't match </FormFeedback>
-							</Col>
+							{/*if contextUser is employee and props.user is notary, show notary status flag*/}
+							{this.props.userProfile.isNotary && this.context.user.isEmployee && (
+								<Col>
+									<Label htmlFor="notary-status">Notary Status</Label>
+									<Input
+										type="select"
+										value={this.state.user.isActiveNotary ? "true" : "false"}
+										name="activeNotary"
+										id="notary-status"
+										onChange={this.handleInputChange}
+									>
+										<option value="true">Active</option>
+										<option value="false">In-Active</option>
+									</Input>
+								</Col>
+							)}
+							{/* show  employee flags only if the employee is a super*/}
+							{this.props.userProfile.isEmployee && this.context.user.isSuper && (
+								<>
+									<Col>
+										<Label htmlFor="employee-status">Employee Status</Label>
+										<Input
+											type="select"
+											value={
+												this.state.user.isActiveEmployee ? "true" : "false"
+											}
+											name="activeEmployee"
+											id="employee-status"
+											onChange={this.handleInputChange}
+										>
+											<option value="true">Active</option>
+											<option value="false">In-Active</option>
+										</Input>
+									</Col>
+									<Col>
+										<Label htmlFor="super-status">Supervisor Status</Label>
+										<Input
+											type="select"
+											value={this.state.user.isSuper ? "true" : "false"}
+											id="super-status"
+											name="superEmployee"
+											onChange={this.handleInputChange}
+										>
+											<option value="true">Active</option>
+											<option value="false">In-Active</option>
+										</Input>
+									</Col>
+								</>
+							)}
 						</Row>
 					</Form>
 				</ModalBody>

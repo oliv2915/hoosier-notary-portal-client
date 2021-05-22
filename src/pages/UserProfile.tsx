@@ -25,7 +25,11 @@ export default class UserProfile extends React.Component<
 			<div>
 				<Row className="mt-3">
 					<Col md="4" className="mb-3">
-						<ProfileUserCard />
+						<ProfileUserCard
+							history={this.props.history}
+							location={this.props.location}
+							match={this.props.match}
+						/>
 					</Col>
 
 					{this.context.user.isNotary && (

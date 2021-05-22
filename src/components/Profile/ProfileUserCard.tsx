@@ -1,13 +1,14 @@
 import React from "react";
+import { RouteComponentProps } from "react-router-dom";
 import { Card, CardHeader, CardBody, Label, Button } from "reactstrap";
 import UserContext from "../../context/UserContext";
 import { IUserContextUser } from "../../interfaces";
-import EditUserModal from "../Modals/EditUserModal";
+import UserModal from "../Modals/UserModal";
 
-interface IProfileUserCardProps {}
+interface IProfileUserCardProps extends RouteComponentProps {}
 interface IProfileUserCardState {
-	isEditInfoModalOpen: boolean;
 	user: IUserContextUser;
+	isEditInfoModalOpen: boolean;
 }
 
 export default class ProfileUserCard extends React.Component<
@@ -19,21 +20,55 @@ export default class ProfileUserCard extends React.Component<
 	constructor(props: IProfileUserCardProps) {
 		super(props);
 		this.state = {
-			isEditInfoModalOpen: false,
 			user: {},
+			isEditInfoModalOpen: false,
 		};
 	}
 
 	componentDidMount() {
-		this.setState({
-			user: this.context.user,
-		});
+		const query = new URLSearchParams(this.props.location.search);
+		if (query.get("user") && this.context.user.isEmployee) {
+			this.setState(
+				{
+					user: { id: Number(query.get("user")) },
+				},
+				() => this.fetchUserRecord()
+			);
+		} else {
+			this.props.history.push("/profile");
+			this.setState({
+				user: this.context.user,
+			});
+		}
 	}
 
 	toggleEditInfoModal = () => {
 		this.setState({
 			isEditInfoModalOpen: !this.state.isEditInfoModalOpen,
 		});
+	};
+
+	fetchUserRecord = () => {
+		fetch(
+			`${process.env.REACT_APP_API_SERVER}/user/profile?id=${this.state.user.id}`,
+			{
+				method: "GET",
+				headers: new Headers({
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${this.context.token}`,
+				}),
+			}
+		)
+			.then((res) => res.json())
+			.then((data) =>
+				this.setState({
+					user: data.user,
+				})
+			);
+	};
+
+	updateProfile = () => {
+		this.fetchUserRecord();
 	};
 
 	render() {
@@ -73,9 +108,15 @@ export default class ProfileUserCard extends React.Component<
 						</Button>
 					</CardBody>
 				</Card>
-				<EditUserModal
+				{/* Edit User */}
+				<UserModal
 					isOpen={this.state.isEditInfoModalOpen}
 					toggle={this.toggleEditInfoModal}
+					userProfile={this.state.user}
+					updateProfile={this.updateProfile}
+					history={this.props.history}
+					location={this.props.location}
+					match={this.props.match}
 				/>
 			</>
 		);

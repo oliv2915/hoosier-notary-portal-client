@@ -7,6 +7,7 @@ import {
 	FormFeedback,
 	FormGroup,
 	Input,
+	Label,
 	Modal,
 	ModalBody,
 	ModalHeader,
@@ -408,9 +409,11 @@ export default class AddressModal extends React.Component<
 						<Row form>
 							<Col hidden={this.context.user.isNotary}>
 								<FormGroup>
+									<Label htmlFor="customers">Customers</Label>
 									<Input
 										type="select"
 										name="customerId"
+										id="customers"
 										valid={!this.state.invalidFields.includes("customerId")}
 										invalid={this.state.invalidFields.includes("customerId")}
 									>
@@ -428,9 +431,11 @@ export default class AddressModal extends React.Component<
 							</Col>
 							<Col>
 								<FormGroup>
+									<Label htmlFor="street-one">Street Address</Label>
 									<Input
 										type="text"
 										name="streetOne"
+										id="street-one"
 										placeholder="Street One"
 										value={this.state.address.streetOne}
 										invalid={this.state.invalidFields.includes("streetOne")}
@@ -442,9 +447,11 @@ export default class AddressModal extends React.Component<
 							</Col>
 							<Col>
 								<FormGroup>
+									<Label htmlFor="street-two">Suite/Unit/Apartment</Label>
 									<Input
 										type="text"
 										name="streetTwo"
+										id="street-two"
 										value={this.state.address.streetTwo}
 										placeholder="Street Two"
 										onChange={this.handleInputChange}
@@ -457,9 +464,11 @@ export default class AddressModal extends React.Component<
 						<Row form>
 							<Col>
 								<FormGroup>
+									<Label htmlFor="city">City</Label>
 									<Input
 										type="text"
 										name="city"
+										id="city"
 										value={this.state.address.city}
 										placeholder="City"
 										invalid={this.state.invalidFields.includes("city")}
@@ -471,9 +480,11 @@ export default class AddressModal extends React.Component<
 							</Col>
 							<Col>
 								<FormGroup>
+									<Label htmlFor="state">State</Label>
 									<Input
 										type="text"
 										name="state"
+										id="state"
 										value={this.state.address.state}
 										placeholder="State"
 										invalid={this.state.invalidFields.includes("state")}
@@ -487,9 +498,11 @@ export default class AddressModal extends React.Component<
 						<Row form>
 							<Col>
 								<FormGroup>
+									<Label htmlFor="zipcode">Zip Code</Label>
 									<Input
 										type="text"
 										name="zipCode"
+										id="zipcode"
 										value={this.state.address.zipCode}
 										placeholder="Zip Code"
 										invalid={this.state.invalidFields.includes("zipCode")}
@@ -501,15 +514,21 @@ export default class AddressModal extends React.Component<
 							</Col>
 							<Col>
 								<FormGroup>
+									<Label htmlFor="type">Address Type</Label>
 									<Input
-										type="text"
+										type="select"
 										name="type"
+										id="type"
 										value={this.state.address.type}
-										placeholder="Address Type"
 										invalid={this.state.invalidFields.includes("type")}
 										valid={!this.state.invalidFields.includes("type")}
 										onChange={this.handleInputChange}
-									/>
+									>
+										<option value={0}>Pick One</option>
+										<option value="Mailing">Mailing</option>
+										<option value="Billing">Billing</option>
+										<option value="Shipping">Shipping</option>
+									</Input>
 									<FormFeedback>Required</FormFeedback>
 								</FormGroup>
 							</Col>
