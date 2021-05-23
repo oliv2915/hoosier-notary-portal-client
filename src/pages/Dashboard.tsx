@@ -2,6 +2,7 @@ import * as React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Row, Col } from "reactstrap";
 import AssignmentsCard from "../components/Dashboard/AssignmentsCard";
+import CustomersCard from "../components/Dashboard/CustomersCard";
 import NotariesCard from "../components/Dashboard/NotariesCard";
 import NavBar from "../components/NavBar";
 import UserContext from "../context/UserContext";
@@ -35,13 +36,22 @@ export default class Dashboard extends React.Component<
 						/>
 					</Col>
 					{this.context.user.isEmployee ? (
-						<Col>
-							<NotariesCard
-								history={this.props.history}
-								location={this.props.location}
-								match={this.props.match}
-							/>
-						</Col>
+						<>
+							<Col>
+								<CustomersCard
+									history={this.props.history}
+									location={this.props.location}
+									match={this.props.match}
+								/>
+							</Col>
+							<Col>
+								<NotariesCard
+									history={this.props.history}
+									location={this.props.location}
+									match={this.props.match}
+								/>
+							</Col>
+						</>
 					) : null}
 				</Row>
 			</>

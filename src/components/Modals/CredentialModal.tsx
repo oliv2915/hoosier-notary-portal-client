@@ -1,4 +1,5 @@
 import * as React from "react";
+import { RouteComponentProps } from "react-router";
 import {
 	Alert,
 	Button,
@@ -16,10 +17,10 @@ import {
 import UserContext from "../../context/UserContext";
 import { ICommission } from "../../interfaces";
 
-interface ICredentialModalProps {
+interface ICredentialModalProps extends RouteComponentProps {
 	isOpen: boolean;
 	toggle: () => void;
-	updateCredentialTable: () => void;
+	updateProfile: () => void;
 	credentialToEdit?: ICommission;
 }
 
@@ -232,7 +233,7 @@ export default class CredentialModal extends React.Component<
 				if ("error" in data) {
 					return; // handled above
 				} else {
-					this.props.updateCredentialTable();
+					this.props.updateProfile();
 					this.props.toggle();
 				}
 			});
@@ -265,7 +266,7 @@ export default class CredentialModal extends React.Component<
 				if ("error" in data) {
 					return; // handled above
 				} else {
-					this.props.updateCredentialTable();
+					this.props.updateProfile();
 					this.props.toggle();
 				}
 			});
@@ -279,6 +280,7 @@ export default class CredentialModal extends React.Component<
 		}
 	};
 	render() {
+		const query = new URLSearchParams(this.props.location.search);
 		return (
 			<Modal
 				isOpen={this.props.isOpen}
@@ -311,6 +313,11 @@ export default class CredentialModal extends React.Component<
 											"commissionNumber"
 										)}
 										onChange={this.handleInputChange}
+										disabled={
+											this.context.user.isEmployee && query.get("user")
+												? true
+												: false
+										}
 									/>
 									<FormFeedback>Required</FormFeedback>
 								</FormGroup>
@@ -331,6 +338,11 @@ export default class CredentialModal extends React.Component<
 											"nameOnCommission"
 										)}
 										onChange={this.handleInputChange}
+										disabled={
+											this.context.user.isEmployee && query.get("user")
+												? true
+												: false
+										}
 									/>
 									<FormFeedback>Required</FormFeedback>
 								</FormGroup>
@@ -352,6 +364,11 @@ export default class CredentialModal extends React.Component<
 											"commissionExpireDate"
 										)}
 										onChange={this.handleInputChange}
+										disabled={
+											this.context.user.isEmployee && query.get("user")
+												? true
+												: false
+										}
 									/>
 									<FormFeedback>Required</FormFeedback>
 								</FormGroup>
@@ -374,6 +391,11 @@ export default class CredentialModal extends React.Component<
 											"commissionState"
 										)}
 										onChange={this.handleInputChange}
+										disabled={
+											this.context.user.isEmployee && query.get("user")
+												? true
+												: false
+										}
 									/>
 									<FormFeedback>Required</FormFeedback>
 								</FormGroup>
@@ -394,12 +416,23 @@ export default class CredentialModal extends React.Component<
 											"countyOfResidence"
 										)}
 										onChange={this.handleInputChange}
+										disabled={
+											this.context.user.isEmployee && query.get("user")
+												? true
+												: false
+										}
 									/>
 									<FormFeedback>Required</FormFeedback>
 								</FormGroup>
 							</Col>
 						</Row>
-						<Button type="submit" color="warning">
+						<Button
+							type="submit"
+							color="warning"
+							disabled={
+								this.context.user.isEmployee && query.get("user") ? true : false
+							}
+						>
 							{this.state.editingCredential
 								? "Edit Commission"
 								: "Add Commission"}

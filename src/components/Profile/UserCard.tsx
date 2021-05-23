@@ -5,9 +5,11 @@ import UserContext from "../../context/UserContext";
 import { IUserContextUser } from "../../interfaces";
 import UserModal from "../Modals/UserModal";
 
-interface IProfileUserCardProps extends RouteComponentProps {}
-interface IProfileUserCardState {
+interface IProfileUserCardProps extends RouteComponentProps {
 	user: IUserContextUser;
+	updateProfile: () => void;
+}
+interface IProfileUserCardState {
 	isEditInfoModalOpen: boolean;
 }
 
@@ -20,55 +22,14 @@ export default class ProfileUserCard extends React.Component<
 	constructor(props: IProfileUserCardProps) {
 		super(props);
 		this.state = {
-			user: {},
 			isEditInfoModalOpen: false,
 		};
-	}
-
-	componentDidMount() {
-		const query = new URLSearchParams(this.props.location.search);
-		if (query.get("user") && this.context.user.isEmployee) {
-			this.setState(
-				{
-					user: { id: Number(query.get("user")) },
-				},
-				() => this.fetchUserRecord()
-			);
-		} else {
-			this.props.history.push("/profile");
-			this.setState({
-				user: this.context.user,
-			});
-		}
 	}
 
 	toggleEditInfoModal = () => {
 		this.setState({
 			isEditInfoModalOpen: !this.state.isEditInfoModalOpen,
 		});
-	};
-
-	fetchUserRecord = () => {
-		fetch(
-			`${process.env.REACT_APP_API_SERVER}/user/profile?id=${this.state.user.id}`,
-			{
-				method: "GET",
-				headers: new Headers({
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${this.context.token}`,
-				}),
-			}
-		)
-			.then((res) => res.json())
-			.then((data) =>
-				this.setState({
-					user: data.user,
-				})
-			);
-	};
-
-	updateProfile = () => {
-		this.fetchUserRecord();
 	};
 
 	render() {
@@ -80,27 +41,27 @@ export default class ProfileUserCard extends React.Component<
 						<div>
 							<Label>
 								<b>Name:</b>{" "}
-								{`${this.state.user.firstName} ${
-									this.state.user.middleName ? this.state.user.middleName : ""
-								} ${this.state.user.lastName} ${
-									this.state.user.suffix ? this.state.user.suffix : ""
+								{`${this.props.user.firstName} ${
+									this.props.user.middleName ? this.props.user.middleName : ""
+								} ${this.props.user.lastName} ${
+									this.props.user.suffix ? this.props.user.suffix : ""
 								}`}
 							</Label>
 						</div>
 						<div>
 							<Label>
-								<b>Phone Number:</b> {this.state.user.phoneNumber}
+								<b>Phone Number:</b> {this.props.user.phoneNumber}
 							</Label>
 						</div>
 						<div>
 							<Label>
-								<b>Email Address:</b> {this.state.user.email}
+								<b>Email Address:</b> {this.props.user.email}
 							</Label>
 						</div>
-						<div hidden={this.state.user.isEmployee}>
+						<div hidden={this.props.user.isEmployee}>
 							<Label>
 								<b>Notary Status:</b>{" "}
-								{this.state.user.isActiveNotary ? "Active" : "In-Active"}
+								{this.props.user.isActiveNotary ? "Active" : "In-Active"}
 							</Label>
 						</div>
 						<Button color="info" size="sm" onClick={this.toggleEditInfoModal}>
@@ -110,10 +71,10 @@ export default class ProfileUserCard extends React.Component<
 				</Card>
 				{/* Edit User */}
 				<UserModal
+					userProfile={this.props.user}
+					updateProfile={this.props.updateProfile}
 					isOpen={this.state.isEditInfoModalOpen}
 					toggle={this.toggleEditInfoModal}
-					userProfile={this.state.user}
-					updateProfile={this.updateProfile}
 					history={this.props.history}
 					location={this.props.location}
 					match={this.props.match}

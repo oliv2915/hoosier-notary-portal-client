@@ -3,13 +3,16 @@ import UserContext from "../../context/UserContext";
 import { Button, Card, CardBody, CardHeader, Table } from "reactstrap";
 import { ICommission } from "../../interfaces";
 import CredentialModal from "../Modals/CredentialModal";
+import { RouteComponentProps } from "react-router-dom";
 
-interface IProfileCredentialTableProps {}
+interface IProfileCredentialTableProps extends RouteComponentProps {
+	credentials: ICommission[];
+	updateProfile: () => void;
+}
 
 interface IProfileCredentialTableState {
 	isAddCredentialModalOpen: boolean;
 	isEditCredentialModalOpen: boolean;
-	credentials: ICommission[];
 	credentialToEdit: ICommission;
 }
 
@@ -24,34 +27,9 @@ export default class ProfileCredential extends React.Component<
 		this.state = {
 			isAddCredentialModalOpen: false,
 			isEditCredentialModalOpen: false,
-			credentials: [],
 			credentialToEdit: {},
 		};
 	}
-
-	componentDidMount() {
-		this.fetchCredentials();
-	}
-
-	fetchCredentials = () => {
-		fetch(`${process.env.REACT_APP_API_SERVER}/commission/all`, {
-			method: "GET",
-			headers: new Headers({
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${this.context.token}`,
-			}),
-		})
-			.then((res) => res.json())
-			.then((data) =>
-				this.setState({
-					credentials: data.commissions,
-				})
-			);
-	};
-
-	updateCredentialTable = () => {
-		this.fetchCredentials();
-	};
 
 	toggleAddCredentialModal = () => {
 		this.setState({
@@ -68,7 +46,7 @@ export default class ProfileCredential extends React.Component<
 	credentialRowClicked = (event: BaseSyntheticEvent) => {
 		this.setState(
 			{
-				credentialToEdit: this.state.credentials[event.currentTarget.id],
+				credentialToEdit: this.props.credentials[event.currentTarget.id],
 			},
 			() => this.toggleEditCredentialModal()
 		);
@@ -80,14 +58,16 @@ export default class ProfileCredential extends React.Component<
 				<Card>
 					<CardHeader>
 						<span>Credential Info </span>
-						<Button
-							type="button"
-							color="info"
-							size="sm"
-							onClick={this.toggleAddCredentialModal}
-						>
-							Add Credential
-						</Button>
+						{this.context.user.isNotary && (
+							<Button
+								type="button"
+								color="info"
+								size="sm"
+								onClick={this.toggleAddCredentialModal}
+							>
+								Add Credential
+							</Button>
+						)}
 					</CardHeader>
 					<CardBody>
 						<Table size="sm" hover responsive borderless>
@@ -99,7 +79,7 @@ export default class ProfileCredential extends React.Component<
 								</tr>
 							</thead>
 							<tbody>
-								{this.state.credentials.map((commission, idx) => {
+								{this.props.credentials.map((commission, idx) => {
 									return (
 										<tr
 											key={idx}
@@ -121,14 +101,20 @@ export default class ProfileCredential extends React.Component<
 				<CredentialModal
 					isOpen={this.state.isAddCredentialModalOpen}
 					toggle={this.toggleAddCredentialModal}
-					updateCredentialTable={this.updateCredentialTable}
+					updateProfile={this.props.updateProfile}
+					history={this.props.history}
+					location={this.props.location}
+					match={this.props.match}
 				/>
 				{/* Edit Credential */}
 				<CredentialModal
 					isOpen={this.state.isEditCredentialModalOpen}
 					toggle={this.toggleEditCredentialModal}
-					updateCredentialTable={this.updateCredentialTable}
+					updateProfile={this.props.updateProfile}
 					credentialToEdit={this.state.credentialToEdit}
+					history={this.props.history}
+					location={this.props.location}
+					match={this.props.match}
 				/>
 			</>
 		);

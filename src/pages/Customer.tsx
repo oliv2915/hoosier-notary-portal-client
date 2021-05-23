@@ -3,6 +3,10 @@ import { ICustomer, ICustomerContact, IAddress } from "../interfaces";
 import UserContext from "../context/UserContext";
 import { RouteComponentProps } from "react-router-dom";
 import NavBar from "../components/NavBar";
+import { Col, Row } from "reactstrap";
+import CustomerCard from "../components/Customer/CustomerCard";
+import CustomerContactsCard from "../components/Customer/CustomerContactsCard";
+import AddressCard from "../components/Cards/AddressesCard";
 
 interface ICustomerProps extends RouteComponentProps {}
 
@@ -54,14 +58,11 @@ export default class Customer extends React.Component<
 		)
 			.then((res) => res.json())
 			.then((data) => {
-				this.setState(
-					{
-						customer: data.customer,
-						contacts: data.contacts,
-						addresses: data.addresses,
-					},
-					() => console.log(this.state)
-				);
+				this.setState({
+					customer: data.customer,
+					contacts: data.contacts,
+					addresses: data.addresses,
+				});
 			});
 	};
 
@@ -75,6 +76,23 @@ export default class Customer extends React.Component<
 					location={this.props.location}
 					match={this.props.match}
 				/>
+				<Row className="mt-3">
+					<Col>
+						<CustomerCard customer={this.state.customer} />
+					</Col>
+					<Col>
+						<CustomerContactsCard contacts={this.state.contacts} />
+					</Col>
+					<Col>
+						<AddressCard
+							addresses={this.state.addresses}
+							updateAddressTable={this.fetchCustomer}
+							history={this.props.history}
+							location={this.props.location}
+							match={this.props.match}
+						/>
+					</Col>
+				</Row>
 			</>
 		);
 	}

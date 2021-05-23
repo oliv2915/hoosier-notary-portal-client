@@ -300,7 +300,7 @@ export default class CustomerModal extends React.Component<
 							<Col>
 								<FormGroup>
 									<Input
-										type="text"
+										type="select"
 										name="customerType"
 										placeholder="Customer Type"
 										className="mb-2"
@@ -308,7 +308,12 @@ export default class CustomerModal extends React.Component<
 										value={this.state.customer.customerType}
 										invalid={this.state.invalidFields.includes("customerType")}
 										valid={!this.state.invalidFields.includes("customerType")}
-									/>
+									>
+										<option value={0}>Pick One</option>
+										<option value="Title">Title</option>
+										<option value="Closing Service">Closing Service</option>
+										<option value="General Notary">General Notary</option>
+									</Input>
 									<FormFeedback>Required</FormFeedback>
 								</FormGroup>
 							</Col>

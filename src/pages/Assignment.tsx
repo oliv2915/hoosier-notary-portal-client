@@ -4,7 +4,7 @@ import UserContext from "../context/UserContext";
 import { RouteComponentProps } from "react-router-dom";
 import AssignmentCard from "../components/Assignment/AssignmentCard";
 import { Row, Col } from "reactstrap";
-import CustomerCard from "../components/CustomerCard";
+import CustomerCard from "../components/Customer/CustomerCard";
 import NotaryCard from "../components/Assignment/NotaryCard";
 import NavBar from "../components/NavBar";
 

@@ -41,7 +41,9 @@ export default class AssignmentModal extends React.Component<
 	constructor(props: IAssignmentModalProps) {
 		super(props);
 		this.state = {
-			assignment: {},
+			assignment: {
+				status: "new",
+			},
 			customers: [],
 			formValid: false,
 			invalidFields: [],
@@ -453,13 +455,18 @@ export default class AssignmentModal extends React.Component<
 								<FormGroup>
 									<Label htmlFor="type">Assignment Type</Label>
 									<Input
-										type="text"
+										type="select"
 										name="type"
 										id="type"
 										invalid={this.state.invalidFields.includes("type")}
 										valid={!this.state.invalidFields.includes("type")}
 										onChange={this.handleInputChange}
-									/>
+									>
+										<option value={0}>Pick One</option>
+										<option value="Refinance">Refinance</option>
+										<option value="HELOC">HELOC</option>
+										<option value="General Notary">General Notary</option>
+									</Input>
 									<FormFeedback>Required</FormFeedback>
 								</FormGroup>
 							</Col>
@@ -497,13 +504,23 @@ export default class AssignmentModal extends React.Component<
 								<FormGroup>
 									<Label htmlFor="status">Assignment Status</Label>
 									<Input
-										type="text"
+										type="select"
 										name="status"
 										id="status"
 										invalid={this.state.invalidFields.includes("status")}
 										valid={!this.state.invalidFields.includes("status")}
 										onChange={this.handleInputChange}
-									/>
+									>
+										<option value="New">New</option>
+										<option value="Pending Assignment">
+											Pending Assignment
+										</option>
+										<option value="Notary Confirmed">Notary Confirmed</option>
+										<option value="Pending Staff Review">
+											Pending Staff Review
+										</option>
+										<option value="Closed">Closed</option>
+									</Input>
 									<FormFeedback>Required</FormFeedback>
 								</FormGroup>
 							</Col>
