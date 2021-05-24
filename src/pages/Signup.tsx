@@ -294,7 +294,10 @@ export default class Signup extends React.Component<
 			})
 			.then((data) => {
 				if (!data) return;
-				if (data.token) this.context.setToken(data.token);
+				if (data.token) {
+					this.context.setToken(data.token);
+					this.props.history.push("/dashboard");
+				}
 			});
 	};
 
