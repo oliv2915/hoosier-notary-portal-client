@@ -1,3 +1,15 @@
-
+.user-info-card-body label,
+.customer-card-body label,
+.assignment-card-body label {
+	font-size: 10pt;
+}
+.user-info-card-body p,
+.customer-card-body p,
+.assignment-card-body p {
+	font-size: 10pt;
+}
+table {
+	font-size: 10pt;
+}
 // all overrides of bootstrap go above this line
 @import "~bootstrap/scss/bootstrap";
