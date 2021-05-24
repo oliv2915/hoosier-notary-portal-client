@@ -163,7 +163,10 @@ export default class Login extends React.Component<ILoginProps, ILoginState> {
 			})
 			.then((data) => {
 				if (!data) return;
-				if (data.token) this.context.setToken(data.token);
+				if (data.token) {
+					this.context.setToken(data.token);
+					this.props.history.push("/dashboard");
+				}
 			});
 	};
 
