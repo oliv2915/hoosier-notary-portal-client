@@ -125,7 +125,6 @@ export default class UserModal extends React.Component<
 		event.preventDefault();
 		if (this.state.formValid) {
 			this.editUser();
-			// console.log(this.state);
 		} else {
 			this.setState({
 				isAlertOpen: true,
