@@ -61,14 +61,7 @@ export default class UserModal extends React.Component<
 	}
 
 	modalDidOpen = () => {
-		if (
-			this.props.userProfile.isEmployee &&
-			this.context.user.isEmployee &&
-			!this.context.user.isSuper
-		) {
-			this.props.history.push("/dashboard");
-			this.props.toggle();
-		} else if (this.props.userProfile.id === this.context.user.id) {
+		if (this.props.userProfile.id === this.context.user.id) {
 			// updating own record
 			this.setState(
 				{
@@ -94,6 +87,15 @@ export default class UserModal extends React.Component<
 			);
 		} else if (this.props.userProfile.isEmployee && this.context.user.isSuper) {
 			// super updating employee record
+			this.setState(
+				{
+					editingEmployee: true,
+					user: this.props.userProfile,
+				},
+				() => this.validateInput()
+			);
+		} else {
+			// employee pulling another employee record
 			this.setState(
 				{
 					editingEmployee: true,
@@ -621,7 +623,7 @@ export default class UserModal extends React.Component<
 								</Col>
 							)}
 							{/* show  employee flags only if the employee is a super*/}
-							{this.props.userProfile.isEmployee && this.context.user.isSuper && (
+							{this.props.userProfile.isEmployee && (
 								<>
 									<Col>
 										<Label htmlFor="employee-status">Employee Status</Label>
@@ -633,6 +635,7 @@ export default class UserModal extends React.Component<
 											name="activeEmployee"
 											id="employee-status"
 											onChange={this.handleInputChange}
+											disabled={!this.context.user.isSuper}
 										>
 											<option value="true">Active</option>
 											<option value="false">In-Active</option>
@@ -646,6 +649,7 @@ export default class UserModal extends React.Component<
 											id="super-status"
 											name="superEmployee"
 											onChange={this.handleInputChange}
+											disabled={!this.context.user.isSuper}
 										>
 											<option value="true">Active</option>
 											<option value="false">In-Active</option>

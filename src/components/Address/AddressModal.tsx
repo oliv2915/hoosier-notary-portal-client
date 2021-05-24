@@ -237,7 +237,6 @@ export default class AddressModal extends React.Component<
 
 	handleSubmit = (event: React.BaseSyntheticEvent) => {
 		event.preventDefault();
-		this.validateInput();
 		if (this.state.formValid) {
 			this.submitInput();
 		} else {

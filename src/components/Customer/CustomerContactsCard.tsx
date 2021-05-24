@@ -2,8 +2,10 @@ import React, { BaseSyntheticEvent } from "react";
 import { ICustomerContact } from "../../interfaces";
 import UserContext from "../../context/UserContext";
 import { Button, Card, CardBody, CardHeader, Table } from "reactstrap";
+import CustomerContactModal from "./CustomerContactModal";
+import { RouteComponentProps } from "react-router-dom";
 
-interface ICustomerContactsCardProps {
+interface ICustomerContactsCardProps extends RouteComponentProps {
 	contacts: ICustomerContact[];
 	updateCustomerProfile: () => void;
 }
@@ -35,7 +37,7 @@ export default class CustomerContactsCard extends React.Component<
 		});
 	};
 
-	toggleEditContactModeal = () => {
+	toggleEditContactModal = () => {
 		this.setState({
 			isEditContactModalOpen: !this.state.isEditContactModalOpen,
 		});
@@ -46,7 +48,7 @@ export default class CustomerContactsCard extends React.Component<
 			{
 				contactToEdit: this.props.contacts[event.currentTarget.id],
 			},
-			() => this.toggleEditContactModeal
+			() => this.toggleEditContactModal()
 		);
 	};
 
@@ -91,6 +93,25 @@ export default class CustomerContactsCard extends React.Component<
 						</tbody>
 					</Table>
 				</CardBody>
+				{/* Add Contact */}
+				<CustomerContactModal
+					isOpen={this.state.isAddContactModalOpen}
+					toggle={this.toggleAddContactModal}
+					updateCustomerProfile={this.props.updateCustomerProfile}
+					history={this.props.history}
+					location={this.props.location}
+					match={this.props.match}
+				/>
+				{/* Update Contact */}
+				<CustomerContactModal
+					isOpen={this.state.isEditContactModalOpen}
+					toggle={this.toggleEditContactModal}
+					updateCustomerProfile={this.props.updateCustomerProfile}
+					contactToEdit={this.state.contactToEdit}
+					history={this.props.history}
+					location={this.props.location}
+					match={this.props.match}
+				/>
 			</Card>
 		);
 	}

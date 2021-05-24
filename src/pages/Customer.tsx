@@ -67,8 +67,13 @@ export default class Customer extends React.Component<
 	};
 
 	render() {
+		const query = new URLSearchParams(this.props.location.search);
+
 		// if not auth, redirect to login page
 		if (!this.context.isAuth) this.props.history.push("/");
+		// if user is notary and trying to access customer page, push to home
+		if (this.context.user.isNotary && query.get("customer"))
+			this.props.history.push("/");
 		return (
 			<>
 				<NavBar
@@ -90,6 +95,9 @@ export default class Customer extends React.Component<
 						<CustomerContactsCard
 							contacts={this.state.contacts}
 							updateCustomerProfile={this.fetchCustomer}
+							history={this.props.history}
+							location={this.props.location}
+							match={this.props.match}
 						/>
 					</Col>
 					<Col>
