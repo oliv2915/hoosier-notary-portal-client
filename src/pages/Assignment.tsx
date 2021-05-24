@@ -5,7 +5,7 @@ import { RouteComponentProps } from "react-router-dom";
 import AssignmentCard from "../components/Assignment/AssignmentCard";
 import { Row, Col } from "reactstrap";
 import CustomerCard from "../components/Customer/CustomerCard";
-import NotaryCard from "../components/Assignment/NotaryCard";
+import UserCard from "../components/User/UserCard";
 import NavBar from "../components/NavBar";
 
 interface IAssignmentProps extends RouteComponentProps {}
@@ -78,7 +78,13 @@ export default class Assignment extends React.Component<
 				/>
 				<Row className="mt-3">
 					<Col>
-						<AssignmentCard assignment={this.state.assignment} />
+						<AssignmentCard
+							assignment={this.state.assignment}
+							updateAssignment={this.fetchAssignment}
+							history={this.props.history}
+							location={this.props.location}
+							match={this.props.match}
+						/>
 					</Col>
 					<Col>
 						<CustomerCard
@@ -89,7 +95,13 @@ export default class Assignment extends React.Component<
 						/>
 					</Col>
 					<Col>
-						<NotaryCard notary={this.state.notary} />
+						<UserCard
+							user={this.state.notary}
+							updateProfile={this.fetchAssignment}
+							history={this.props.history}
+							location={this.props.location}
+							match={this.props.match}
+						/>
 					</Col>
 				</Row>
 			</>

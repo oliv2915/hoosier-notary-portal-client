@@ -471,6 +471,16 @@ export default class UserModal extends React.Component<
 		}
 	};
 
+	disableField = () => {
+		if (
+			this.context.user.isEmployee &&
+			this.state.user.id !== this.context.user.id
+		) {
+			// disable field if user is employee and id's don't match
+			return true;
+		}
+	};
+
 	render() {
 		return (
 			<Modal
@@ -497,7 +507,7 @@ export default class UserModal extends React.Component<
 									id="first-name"
 									value={this.state.user.firstName}
 									onChange={this.handleInputChange}
-									disabled={this.context.user.isEmployee}
+									disabled={this.disableField()}
 								/>
 								<FormFeedback>Required</FormFeedback>
 							</Col>
@@ -512,7 +522,7 @@ export default class UserModal extends React.Component<
 										this.state.user.middleName ? this.state.user.middleName : ""
 									}
 									onChange={this.handleInputChange}
-									disabled={this.context.user.isEmployee}
+									disabled={this.disableField()}
 								/>
 							</Col>
 							<Col>
@@ -525,7 +535,7 @@ export default class UserModal extends React.Component<
 									id="last-name"
 									value={this.state.user.lastName}
 									onChange={this.handleInputChange}
-									disabled={this.context.user.isEmployee}
+									disabled={this.disableField()}
 								/>
 								<FormFeedback>Required</FormFeedback>
 							</Col>
@@ -538,7 +548,7 @@ export default class UserModal extends React.Component<
 									id="suffix"
 									value={this.state.user.suffix ? this.state.user.suffix : ""}
 									onChange={this.handleInputChange}
-									disabled={this.context.user.isEmployee}
+									disabled={this.disableField()}
 								/>
 							</Col>
 						</Row>
@@ -553,7 +563,7 @@ export default class UserModal extends React.Component<
 									id="email"
 									value={this.state.user.email}
 									onChange={this.handleInputChange}
-									disabled={this.context.user.isEmployee}
+									disabled={this.disableField()}
 								/>
 								<FormFeedback>Required</FormFeedback>
 							</Col>
@@ -567,7 +577,7 @@ export default class UserModal extends React.Component<
 									id="phone-number"
 									value={this.state.user.phoneNumber}
 									onChange={this.handleInputChange}
-									disabled={this.context.user.isEmployee}
+									disabled={this.disableField()}
 								/>
 								<FormFeedback>Required</FormFeedback>
 							</Col>

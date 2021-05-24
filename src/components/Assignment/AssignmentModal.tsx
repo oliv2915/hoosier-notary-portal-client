@@ -20,10 +20,13 @@ import { IAssignment, ICustomer } from "../../interfaces";
 interface IAssignmentModalProps extends RouteComponentProps {
 	isOpen: boolean;
 	toggle: () => void;
+	assignmentToEdit?: IAssignment;
+	updateAssignment?: () => void;
 }
 
 interface IAssignmentModalState {
 	assignment: IAssignment;
+	editingAssignment: boolean;
 	customers: ICustomer[];
 	formValid: boolean;
 	invalidFields: string[];
@@ -42,8 +45,9 @@ export default class AssignmentModal extends React.Component<
 		super(props);
 		this.state = {
 			assignment: {
-				status: "new",
+				status: "New",
 			},
+			editingAssignment: false,
 			customers: [],
 			formValid: false,
 			invalidFields: [],
@@ -52,6 +56,35 @@ export default class AssignmentModal extends React.Component<
 	}
 
 	modalDidOpen = () => {
+		this.fetchCustomers();
+		if (this.props.assignmentToEdit) {
+			// updating assignment
+			this.setState(
+				{
+					editingAssignment: true,
+					assignment: this.props.assignmentToEdit,
+				},
+				() => this.validateInput()
+			);
+		} else {
+			this.validateInput();
+		}
+	};
+
+	modalDidClose = () => {
+		this.setState({
+			assignment: {},
+			editingAssignment: false,
+			customers: [],
+			formValid: false,
+			invalidFields: [],
+			isAlertOpen: false,
+			alertMessage: undefined,
+			alertColor: undefined,
+		});
+	};
+
+	fetchCustomers = () => {
 		fetch(`${process.env.REACT_APP_API_SERVER}/customer/all`, {
 			method: "GET",
 			headers: new Headers({
@@ -65,19 +98,55 @@ export default class AssignmentModal extends React.Component<
 					customers: data.customers,
 				});
 			});
-		this.validateInput();
 	};
 
-	modalDidClose = () => {
-		this.setState({
-			assignment: {},
-			customers: [],
-			formValid: false,
-			invalidFields: [],
-			isAlertOpen: false,
-			alertMessage: undefined,
-			alertColor: undefined,
-		});
+	addAssignment = () => {
+		fetch(`${process.env.REACT_APP_API_SERVER}/assignment/add`, {
+			method: "POST",
+			headers: new Headers({
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${this.context.token}`,
+			}),
+			body: JSON.stringify({
+				assignment: this.state.assignment,
+			}),
+		})
+			.then((res) => {
+				if (res.status !== 201) {
+					this.setState({
+						isAlertOpen: true,
+						alertColor: "danger",
+						alertMessage:
+							"Please check the enteries below. There was an issue with adding the assignment",
+					});
+				}
+				return res.json();
+			})
+			.then((data) => {
+				if ("error" in data) return; // nothing to do here, handled above
+				this.props.history.push(`/assignment?assignment=${data.assignment.id}`);
+				this.props.toggle();
+			});
+	};
+
+	editAssignment = () => {
+		fetch(`${process.env.REACT_APP_API_SERVER}/assignment/update`, {
+			method: "PUT",
+			headers: new Headers({
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${this.context.token}`,
+			}),
+			body: JSON.stringify({
+				assignment: this.state.assignment,
+			}),
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				if (this.props.updateAssignment) {
+					this.props.updateAssignment();
+					this.props.toggle();
+				}
+			});
 	};
 
 	toggleAlert = () => {
@@ -92,7 +161,9 @@ export default class AssignmentModal extends React.Component<
 				this.setState(
 					{
 						assignment: {
+							id: this.state.assignment.id,
 							customerId: event.target.value,
+							userId: this.state.assignment.userId,
 							fileNumber: this.state.assignment.fileNumber,
 							dueDate: this.state.assignment.dueDate,
 							notes: this.state.assignment.notes,
@@ -112,7 +183,9 @@ export default class AssignmentModal extends React.Component<
 				this.setState(
 					{
 						assignment: {
+							id: this.state.assignment.id,
 							customerId: this.state.assignment.customerId,
+							userId: this.state.assignment.userId,
 							fileNumber: event.target.value,
 							dueDate: this.state.assignment.dueDate,
 							notes: this.state.assignment.notes,
@@ -132,7 +205,9 @@ export default class AssignmentModal extends React.Component<
 				this.setState(
 					{
 						assignment: {
+							id: this.state.assignment.id,
 							customerId: this.state.assignment.customerId,
+							userId: this.state.assignment.userId,
 							fileNumber: this.state.assignment.fileNumber,
 							dueDate: event.target.value,
 							notes: this.state.assignment.notes,
@@ -152,7 +227,9 @@ export default class AssignmentModal extends React.Component<
 				this.setState(
 					{
 						assignment: {
+							id: this.state.assignment.id,
 							customerId: this.state.assignment.customerId,
+							userId: this.state.assignment.userId,
 							fileNumber: this.state.assignment.fileNumber,
 							dueDate: this.state.assignment.dueDate,
 							notes: event.target.value,
@@ -172,7 +249,9 @@ export default class AssignmentModal extends React.Component<
 				this.setState(
 					{
 						assignment: {
+							id: this.state.assignment.id,
 							customerId: this.state.assignment.customerId,
+							userId: this.state.assignment.userId,
 							fileNumber: this.state.assignment.fileNumber,
 							dueDate: this.state.assignment.dueDate,
 							notes: this.state.assignment.notes,
@@ -192,7 +271,9 @@ export default class AssignmentModal extends React.Component<
 				this.setState(
 					{
 						assignment: {
+							id: this.state.assignment.id,
 							customerId: this.state.assignment.customerId,
+							userId: this.state.assignment.userId,
 							fileNumber: this.state.assignment.fileNumber,
 							dueDate: this.state.assignment.dueDate,
 							notes: this.state.assignment.notes,
@@ -212,7 +293,9 @@ export default class AssignmentModal extends React.Component<
 				this.setState(
 					{
 						assignment: {
+							id: this.state.assignment.id,
 							customerId: this.state.assignment.customerId,
+							userId: this.state.assignment.userId,
 							fileNumber: this.state.assignment.fileNumber,
 							dueDate: this.state.assignment.dueDate,
 							notes: this.state.assignment.notes,
@@ -232,7 +315,9 @@ export default class AssignmentModal extends React.Component<
 				this.setState(
 					{
 						assignment: {
+							id: this.state.assignment.id,
 							customerId: this.state.assignment.customerId,
+							userId: this.state.assignment.userId,
 							fileNumber: this.state.assignment.fileNumber,
 							dueDate: this.state.assignment.dueDate,
 							notes: this.state.assignment.notes,
@@ -252,7 +337,9 @@ export default class AssignmentModal extends React.Component<
 				this.setState(
 					{
 						assignment: {
+							id: this.state.assignment.id,
 							customerId: this.state.assignment.customerId,
+							userId: this.state.assignment.userId,
 							fileNumber: this.state.assignment.fileNumber,
 							dueDate: this.state.assignment.dueDate,
 							notes: this.state.assignment.notes,
@@ -272,7 +359,9 @@ export default class AssignmentModal extends React.Component<
 				this.setState(
 					{
 						assignment: {
+							id: this.state.assignment.id,
 							customerId: this.state.assignment.customerId,
+							userId: this.state.assignment.userId,
 							fileNumber: this.state.assignment.fileNumber,
 							dueDate: this.state.assignment.dueDate,
 							notes: this.state.assignment.notes,
@@ -292,7 +381,9 @@ export default class AssignmentModal extends React.Component<
 				this.setState(
 					{
 						assignment: {
+							id: this.state.assignment.id,
 							customerId: this.state.assignment.customerId,
+							userId: this.state.assignment.userId,
 							fileNumber: this.state.assignment.fileNumber,
 							dueDate: this.state.assignment.dueDate,
 							notes: this.state.assignment.notes,
@@ -354,44 +445,25 @@ export default class AssignmentModal extends React.Component<
 	handleSubmit = (event: React.BaseSyntheticEvent) => {
 		event.preventDefault();
 		if (this.state.formValid) {
-			this.submitForm();
+			this.submitInput();
 		} else {
 			this.setState({
 				isAlertOpen: true,
 				alertMessage: "All required fields must have an entry",
-				alertColor: "info",
+				alertColor: "danger",
 			});
 		}
 	};
 
-	submitForm = () => {
-		fetch(`${process.env.REACT_APP_API_SERVER}/assignment/add`, {
-			method: "POST",
-			headers: new Headers({
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${this.context.token}`,
-			}),
-			body: JSON.stringify({
-				assignment: this.state.assignment,
-			}),
-		})
-			.then((res) => {
-				if (res.status !== 201) {
-					this.setState({
-						isAlertOpen: true,
-						alertColor: "danger",
-						alertMessage:
-							"Please check the enteries below. There was an issue with adding the assignment",
-					});
-				}
-				return res.json();
-			})
-			.then((data) => {
-				if ("error" in data) return; // nothing to do here, handled above
-				this.props.history.push(`/assignment?assignment=${data.assignment.id}`);
-				this.props.toggle();
-			});
+	submitInput = () => {
+		if (this.state.editingAssignment) {
+			this.editAssignment();
+		} else {
+			this.addAssignment();
+		}
 	};
+
+	submitForm = () => {};
 
 	render() {
 		return (
@@ -402,7 +474,9 @@ export default class AssignmentModal extends React.Component<
 				onClosed={this.modalDidClose}
 				size="lg"
 			>
-				<ModalHeader toggle={this.props.toggle}>Add Assignment</ModalHeader>
+				<ModalHeader toggle={this.props.toggle}>
+					{this.state.editingAssignment ? "Edit Assignment" : "Add Assignment"}
+				</ModalHeader>
 				<ModalBody>
 					<Alert
 						color={this.state.alertColor}
@@ -444,6 +518,7 @@ export default class AssignmentModal extends React.Component<
 										type="text"
 										name="fileNumber"
 										id="file-number"
+										value={this.state.assignment.fileNumber}
 										invalid={this.state.invalidFields.includes("fileNumber")}
 										valid={!this.state.invalidFields.includes("fileNumber")}
 										onChange={this.handleInputChange}
@@ -458,6 +533,7 @@ export default class AssignmentModal extends React.Component<
 										type="select"
 										name="type"
 										id="type"
+										value={this.state.assignment.type}
 										invalid={this.state.invalidFields.includes("type")}
 										valid={!this.state.invalidFields.includes("type")}
 										onChange={this.handleInputChange}
@@ -479,6 +555,7 @@ export default class AssignmentModal extends React.Component<
 										type="datetime-local"
 										name="dueDate"
 										id="due-date"
+										value={this.state.assignment.dueDate}
 										invalid={this.state.invalidFields.includes("dueDate")}
 										valid={!this.state.invalidFields.includes("dueDate")}
 										onChange={this.handleInputChange}
@@ -493,6 +570,7 @@ export default class AssignmentModal extends React.Component<
 										type="text"
 										name="rate"
 										id="rate"
+										value={this.state.assignment.rate}
 										invalid={this.state.invalidFields.includes("rate")}
 										valid={!this.state.invalidFields.includes("rate")}
 										onChange={this.handleInputChange}
@@ -507,6 +585,7 @@ export default class AssignmentModal extends React.Component<
 										type="select"
 										name="status"
 										id="status"
+										value={this.state.assignment.status}
 										invalid={this.state.invalidFields.includes("status")}
 										valid={!this.state.invalidFields.includes("status")}
 										onChange={this.handleInputChange}
@@ -533,6 +612,7 @@ export default class AssignmentModal extends React.Component<
 										type="text"
 										name="contactName"
 										id="contact-name"
+										value={this.state.assignment.contactName}
 										invalid={this.state.invalidFields.includes("contactName")}
 										valid={!this.state.invalidFields.includes("contactName")}
 										onChange={this.handleInputChange}
@@ -547,6 +627,7 @@ export default class AssignmentModal extends React.Component<
 										type="text"
 										name="contactPhoneNumber"
 										id="contact-phone"
+										value={this.state.assignment.contactPhoneNumber}
 										invalid={this.state.invalidFields.includes(
 											"contactPhoneNumber"
 										)}
@@ -565,6 +646,7 @@ export default class AssignmentModal extends React.Component<
 										type="text"
 										name="contactEmail"
 										id="contact-email"
+										value={this.state.assignment.contactEmail}
 										invalid={this.state.invalidFields.includes("contactEmail")}
 										valid={!this.state.invalidFields.includes("contactEmail")}
 										onChange={this.handleInputChange}
@@ -581,6 +663,7 @@ export default class AssignmentModal extends React.Component<
 										type="text"
 										name="meetingAddress"
 										id="meeting-address"
+										value={this.state.assignment.meetingAddress}
 										invalid={this.state.invalidFields.includes(
 											"meetingAddress"
 										)}
@@ -598,6 +681,7 @@ export default class AssignmentModal extends React.Component<
 									<Input
 										type="textarea"
 										name="notes"
+										value={this.state.assignment.notes}
 										id="notes"
 										valid
 										onChange={this.handleInputChange}
@@ -607,7 +691,9 @@ export default class AssignmentModal extends React.Component<
 							</Col>
 						</Row>
 						<Button type="submit" color="warning">
-							Add Assignment
+							{this.state.editingAssignment
+								? "Edit Assignment"
+								: "Add Assignment"}
 						</Button>
 					</Form>
 				</ModalBody>

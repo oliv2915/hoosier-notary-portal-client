@@ -56,7 +56,7 @@ export interface IAssignment {
 	customerId?: number;
 	userId?: number;
 	fileNumber?: string;
-	dueDate?: Date;
+	dueDate?: string;
 	notes?: string;
 	contactName?: string;
 	contactPhoneNumber?: string;

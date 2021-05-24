@@ -6,13 +6,18 @@ interface INotaryCardProps {
 	notary: IUserContextUser;
 }
 
-const NotaryCard = (props: INotaryCardProps) => {
-	return (
-		<Card>
-			<CardHeader>Notary Details</CardHeader>
-			<CardBody>Notary Details Section</CardBody>
-		</Card>
-	);
-};
+interface INotaryCardState {}
 
-export default NotaryCard;
+export default class NotaryCard extends React.Component<
+	INotaryCardProps,
+	INotaryCardState
+> {
+	render() {
+		return (
+			<Card>
+				<CardHeader>Notary Details</CardHeader>
+				<CardBody>Notary Details Section</CardBody>
+			</Card>
+		);
+	}
+}

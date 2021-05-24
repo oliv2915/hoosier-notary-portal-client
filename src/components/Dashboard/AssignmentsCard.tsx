@@ -48,6 +48,14 @@ export default class AssignmentsCard extends React.Component<
 		this.props.history.push(`/assignment?assignment=${assignmentId}`);
 	};
 
+	convertDueDate = (dueDate: string | undefined) => {
+		if (dueDate) {
+			return new Date(dueDate).toLocaleString();
+		} else {
+			return "";
+		}
+	};
+
 	render() {
 		return (
 			<Card>
@@ -72,7 +80,7 @@ export default class AssignmentsCard extends React.Component<
 									>
 										<td>{assignment.type}</td>
 										<td>{assignment.status}</td>
-										<td>{assignment.dueDate}</td>
+										<td>{this.convertDueDate(assignment.dueDate)}</td>
 									</tr>
 								);
 							})}
