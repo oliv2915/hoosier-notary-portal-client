@@ -2,7 +2,7 @@ import React, { BaseSyntheticEvent } from "react";
 import UserContext from "../../context/UserContext";
 import { Button, Card, CardBody, CardHeader, Table } from "reactstrap";
 import { IAddress } from "../../interfaces";
-import AddressModal from "../Modals/AddressModal";
+import AddressModal from "./AddressModal";
 import { RouteComponentProps } from "react-router-dom";
 
 interface IAddressCardProps extends RouteComponentProps {

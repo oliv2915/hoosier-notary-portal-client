@@ -2,7 +2,7 @@ import React, { BaseSyntheticEvent } from "react";
 import UserContext from "../../context/UserContext";
 import { Button, Card, CardBody, CardHeader, Table } from "reactstrap";
 import { ICommission } from "../../interfaces";
-import CredentialModal from "../Modals/CredentialModal";
+import CredentialModal from "./CredentialModal";
 import { RouteComponentProps } from "react-router-dom";
 
 interface IProfileCredentialTableProps extends RouteComponentProps {

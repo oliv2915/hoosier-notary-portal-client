@@ -6,7 +6,7 @@ import NavBar from "../components/NavBar";
 import { Col, Row } from "reactstrap";
 import CustomerCard from "../components/Customer/CustomerCard";
 import CustomerContactsCard from "../components/Customer/CustomerContactsCard";
-import AddressCard from "../components/Cards/AddressesCard";
+import AddressCard from "../components/Address/AddressesCard";
 
 interface ICustomerProps extends RouteComponentProps {}
 
@@ -78,10 +78,19 @@ export default class Customer extends React.Component<
 				/>
 				<Row className="mt-3">
 					<Col>
-						<CustomerCard customer={this.state.customer} />
+						<CustomerCard
+							customer={this.state.customer}
+							updateCustomerProfile={this.fetchCustomer}
+							history={this.props.history}
+							location={this.props.location}
+							match={this.props.match}
+						/>
 					</Col>
 					<Col>
-						<CustomerContactsCard contacts={this.state.contacts} />
+						<CustomerContactsCard
+							contacts={this.state.contacts}
+							updateCustomerProfile={this.fetchCustomer}
+						/>
 					</Col>
 					<Col>
 						<AddressCard

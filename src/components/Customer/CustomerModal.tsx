@@ -19,10 +19,13 @@ import { ICustomer } from "../../interfaces";
 interface ICustomerModalProps extends RouteComponentProps {
 	isOpen: boolean;
 	toggle: () => void;
+	customerToEdit?: ICustomer;
+	updateCustomerProfile?: () => void;
 }
 
 interface ICustomerModalState {
 	customer: ICustomer;
+	editingCustomer: boolean;
 	formValid: boolean;
 	invalidFields: string[];
 	isAlertOpen: boolean;
@@ -40,6 +43,7 @@ export default class CustomerModal extends React.Component<
 		super(props);
 		this.state = {
 			customer: {},
+			editingCustomer: false,
 			formValid: false,
 			invalidFields: [],
 			isAlertOpen: false,
@@ -47,12 +51,23 @@ export default class CustomerModal extends React.Component<
 	}
 
 	modalDidOpen = () => {
-		this.validateInput();
+		if (this.props.customerToEdit) {
+			this.setState(
+				{
+					editingCustomer: true,
+					customer: this.props.customerToEdit,
+				},
+				() => this.validateInput()
+			);
+		} else {
+			this.validateInput();
+		}
 	};
 
 	modalDidClose = () => {
 		this.setState({
 			customer: {},
+			editingCustomer: false,
 			formValid: false,
 			invalidFields: [],
 			isAlertOpen: false,
@@ -69,6 +84,7 @@ export default class CustomerModal extends React.Component<
 				this.setState(
 					{
 						customer: {
+							id: this.state.customer.id,
 							name: event.target.value,
 							phoneNumber: this.state.customer.phoneNumber,
 							email: this.state.customer.email,
@@ -83,6 +99,7 @@ export default class CustomerModal extends React.Component<
 				this.setState(
 					{
 						customer: {
+							id: this.state.customer.id,
 							name: this.state.customer.name,
 							phoneNumber: event.target.value,
 							email: this.state.customer.email,
@@ -97,6 +114,7 @@ export default class CustomerModal extends React.Component<
 				this.setState(
 					{
 						customer: {
+							id: this.state.customer.id,
 							name: this.state.customer.name,
 							phoneNumber: this.state.customer.phoneNumber,
 							email: event.target.value,
@@ -111,6 +129,7 @@ export default class CustomerModal extends React.Component<
 				this.setState(
 					{
 						customer: {
+							id: this.state.customer.id,
 							name: this.state.customer.name,
 							phoneNumber: this.state.customer.phoneNumber,
 							email: this.state.customer.email,
@@ -125,6 +144,7 @@ export default class CustomerModal extends React.Component<
 				this.setState(
 					{
 						customer: {
+							id: this.state.customer.id,
 							name: this.state.customer.name,
 							phoneNumber: this.state.customer.phoneNumber,
 							email: this.state.customer.email,
@@ -179,56 +199,78 @@ export default class CustomerModal extends React.Component<
 
 	submitForm = (event: React.BaseSyntheticEvent) => {
 		event.preventDefault();
-		this.validateInput();
-		if (this.state.formValid) {
-			this.submitFetch();
+		if (this.state.formValid && this.state.editingCustomer) {
+			this.editCustomer();
+		} else if (this.state.formValid) {
+			this.addCustomer();
 		}
 	};
 
-	submitFetch = () => {
-		this.setState(
-			{
-				isAlertOpen: false,
-				alertColor: undefined,
-				alertMessage: undefined,
-			},
-			() =>
-				fetch(`${process.env.REACT_APP_API_SERVER}/customer/add`, {
-					method: "POST",
-					headers: new Headers({
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${this.context.token}`,
-					}),
-					body: JSON.stringify({
-						customer: this.state.customer,
-					}),
-				})
-					.then((res) => {
-						if (res.status !== 201) {
-							if (res.status === 409) {
-								this.setState({
-									isAlertOpen: true,
-									alertColor: "danger",
-									alertMessage: "Email address already in use",
-								});
-							}
-						}
-						return res.json();
-					})
-					.then((data) => {
-						if ("error" in data) {
-							return; // do nothing as this is handled when the res.status is checked
-						} else {
-							// this.setState({
-							// 	isAlertOpen: true,
-							// 	alertMessage: "Customer Added",
-							// 	alertColor: "success",
-							// });
-							this.props.history.push(`/customer?customer=${data.customer.id}`);
-							this.props.toggle();
-						}
-					})
-		);
+	addCustomer = () => {
+		fetch(`${process.env.REACT_APP_API_SERVER}/customer/add`, {
+			method: "POST",
+			headers: new Headers({
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${this.context.token}`,
+			}),
+			body: JSON.stringify({
+				customer: this.state.customer,
+			}),
+		})
+			.then((res) => {
+				if (res.status !== 201) {
+					if (res.status === 409) {
+						this.setState({
+							isAlertOpen: true,
+							alertColor: "danger",
+							alertMessage: "Email address already in use",
+						});
+					}
+				}
+				return res.json();
+			})
+			.then((data) => {
+				if ("error" in data) {
+					return; // do nothing as this is handled when the res.status is checked
+				} else {
+					this.props.history.push(`/customer?customer=${data.customer.id}`);
+					this.props.toggle();
+				}
+			});
+	};
+
+	editCustomer = () => {
+		fetch(`${process.env.REACT_APP_API_SERVER}/customer/update`, {
+			method: "PUT",
+			headers: new Headers({
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${this.context.token}`,
+			}),
+			body: JSON.stringify({
+				customer: this.state.customer,
+			}),
+		})
+			.then((res) => {
+				if (res.status !== 201) {
+					if (res.status === 409) {
+						this.setState({
+							isAlertOpen: true,
+							alertColor: "danger",
+							alertMessage: "Email address already in use",
+						});
+					}
+				}
+				return res.json();
+			})
+			.then((data) => {
+				if ("error" in data) {
+					return; // do nothing as this is handled when the res.status is checked
+				} else {
+					this.props.updateCustomerProfile &&
+						this.props.updateCustomerProfile();
+					this.props.toggle();
+				}
+			});
 	};
 
 	render() {
@@ -239,7 +281,9 @@ export default class CustomerModal extends React.Component<
 				onOpened={this.modalDidOpen}
 				onClosed={this.modalDidClose}
 			>
-				<ModalHeader toggle={this.props.toggle}>Add Customer</ModalHeader>
+				<ModalHeader toggle={this.props.toggle}>
+					{this.state.editingCustomer ? "Update Customer" : "Add Customer"}
+				</ModalHeader>
 				<ModalBody>
 					<Alert
 						color={this.state.alertColor}
@@ -336,7 +380,7 @@ export default class CustomerModal extends React.Component<
 							</Col>
 						</Row>
 						<Button type="submit" color="warning">
-							Add Customer
+							{this.state.editingCustomer ? "Update Customer" : "Add Customer"}
 						</Button>
 					</Form>
 				</ModalBody>

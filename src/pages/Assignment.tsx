@@ -81,7 +81,12 @@ export default class Assignment extends React.Component<
 						<AssignmentCard assignment={this.state.assignment} />
 					</Col>
 					<Col>
-						<CustomerCard customer={this.state.customer} />
+						<CustomerCard
+							customer={this.state.customer}
+							history={this.props.history}
+							location={this.props.location}
+							match={this.props.match}
+						/>
 					</Col>
 					<Col>
 						<NotaryCard notary={this.state.notary} />

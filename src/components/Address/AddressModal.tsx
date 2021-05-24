@@ -373,7 +373,6 @@ export default class AddressModal extends React.Component<
 										type="text"
 										name="streetOne"
 										id="street-one"
-										placeholder="Street One"
 										value={this.state.address.streetOne}
 										invalid={this.state.invalidFields.includes("streetOne")}
 										valid={!this.state.invalidFields.includes("streetOne")}
@@ -395,7 +394,6 @@ export default class AddressModal extends React.Component<
 										name="streetTwo"
 										id="street-two"
 										value={this.state.address.streetTwo}
-										placeholder="Street Two"
 										onChange={this.handleInputChange}
 										disabled={
 											this.context.user.isEmployee && query.get("user")
@@ -417,7 +415,6 @@ export default class AddressModal extends React.Component<
 										name="city"
 										id="city"
 										value={this.state.address.city}
-										placeholder="City"
 										invalid={this.state.invalidFields.includes("city")}
 										valid={!this.state.invalidFields.includes("city")}
 										onChange={this.handleInputChange}
@@ -438,7 +435,6 @@ export default class AddressModal extends React.Component<
 										name="state"
 										id="state"
 										value={this.state.address.state}
-										placeholder="State"
 										invalid={this.state.invalidFields.includes("state")}
 										valid={!this.state.invalidFields.includes("state")}
 										onChange={this.handleInputChange}
@@ -461,7 +457,6 @@ export default class AddressModal extends React.Component<
 										name="zipCode"
 										id="zipcode"
 										value={this.state.address.zipCode}
-										placeholder="Zip Code"
 										invalid={this.state.invalidFields.includes("zipCode")}
 										valid={!this.state.invalidFields.includes("zipCode")}
 										onChange={this.handleInputChange}

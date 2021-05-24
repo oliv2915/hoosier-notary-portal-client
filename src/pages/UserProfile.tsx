@@ -3,9 +3,9 @@ import { RouteComponentProps } from "react-router-dom";
 import { Col, Row } from "reactstrap";
 
 import UserContext from "../context/UserContext";
-import AddressesCard from "../components/Cards/AddressesCard";
-import CredentialCard from "../components/Profile/CredentialCard";
-import UserCard from "../components/Profile/UserCard";
+import AddressesCard from "../components/Address/AddressesCard";
+import CredentialCard from "../components/User/CredentialCard";
+import UserCard from "../components/User/UserCard";
 import NavBar from "../components/NavBar";
 import { IAddress, ICommission, IUserContextUser } from "../interfaces";
 

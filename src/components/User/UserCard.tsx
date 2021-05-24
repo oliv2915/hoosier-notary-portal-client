@@ -3,7 +3,7 @@ import { RouteComponentProps } from "react-router-dom";
 import { Card, CardHeader, CardBody, Label, Button } from "reactstrap";
 import UserContext from "../../context/UserContext";
 import { IUserContextUser } from "../../interfaces";
-import UserModal from "../Modals/UserModal";
+import UserModal from "./UserModal";
 
 interface IProfileUserCardProps extends RouteComponentProps {
 	user: IUserContextUser;

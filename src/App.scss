@@ -1,4 +1,10 @@
-.basic-info-card-body label {
+.basic-info-card-body label,
+.customer-card-body label,
+.assignment-card-body label {
+	font-size: 10pt;
+}
+.customer-card-body p,
+.assignment-card-body p {
 	font-size: 10pt;
 }
 table {

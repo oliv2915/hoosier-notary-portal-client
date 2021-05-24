@@ -3,8 +3,8 @@ import { Button, Nav, Navbar, NavbarBrand, NavItem, NavLink } from "reactstrap";
 import { Link, RouteComponentProps } from "react-router-dom";
 import Logo from "../assets/logo.svg";
 import UserContext from "../context/UserContext";
-import CustomerModal from "./Modals/CustomerModal";
-import AssignmentModal from "./Modals/AssignmentModal";
+import CustomerModal from "./Customer/CustomerModal";
+import AssignmentModal from "./Assignment/AssignmentModal";
 
 interface INavBarProps extends RouteComponentProps {}
 interface INavBarState {

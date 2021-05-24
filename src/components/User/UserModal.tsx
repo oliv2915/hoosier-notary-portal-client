@@ -494,8 +494,8 @@ export default class UserModal extends React.Component<
 									name="firstName"
 									id="first-name"
 									value={this.state.user.firstName}
-									placeholder="First name"
 									onChange={this.handleInputChange}
+									disabled={this.context.user.isEmployee}
 								/>
 								<FormFeedback>Required</FormFeedback>
 							</Col>
@@ -509,8 +509,8 @@ export default class UserModal extends React.Component<
 									value={
 										this.state.user.middleName ? this.state.user.middleName : ""
 									}
-									placeholder="Middle Name"
 									onChange={this.handleInputChange}
+									disabled={this.context.user.isEmployee}
 								/>
 							</Col>
 							<Col>
@@ -522,8 +522,8 @@ export default class UserModal extends React.Component<
 									name="lastName"
 									id="last-name"
 									value={this.state.user.lastName}
-									placeholder="Last Name"
 									onChange={this.handleInputChange}
+									disabled={this.context.user.isEmployee}
 								/>
 								<FormFeedback>Required</FormFeedback>
 							</Col>
@@ -535,8 +535,8 @@ export default class UserModal extends React.Component<
 									name="suffix"
 									id="suffix"
 									value={this.state.user.suffix ? this.state.user.suffix : ""}
-									placeholder="Suffix"
 									onChange={this.handleInputChange}
+									disabled={this.context.user.isEmployee}
 								/>
 							</Col>
 						</Row>
@@ -550,8 +550,8 @@ export default class UserModal extends React.Component<
 									name="email"
 									id="email"
 									value={this.state.user.email}
-									placeholder="Email Address"
 									onChange={this.handleInputChange}
+									disabled={this.context.user.isEmployee}
 								/>
 								<FormFeedback>Required</FormFeedback>
 							</Col>
@@ -564,8 +564,8 @@ export default class UserModal extends React.Component<
 									name="phoneNumber"
 									id="phone-number"
 									value={this.state.user.phoneNumber}
-									placeholder="Phone Number"
 									onChange={this.handleInputChange}
+									disabled={this.context.user.isEmployee}
 								/>
 								<FormFeedback>Required</FormFeedback>
 							</Col>
@@ -583,7 +583,6 @@ export default class UserModal extends React.Component<
 											type="password"
 											name="password"
 											id="password"
-											placeholder="Password"
 											onChange={this.handleInputChange}
 										/>
 										<FormFeedback>Required</FormFeedback>
@@ -597,7 +596,6 @@ export default class UserModal extends React.Component<
 											type="password"
 											name="confirmPassword"
 											id="confirm-password"
-											placeholder="Confirm Password"
 											onChange={this.handleInputChange}
 										/>
 										<FormFeedback>Passwords don't match </FormFeedback>
